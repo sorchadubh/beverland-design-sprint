@@ -1,5 +1,5 @@
-import taxonomy from "./taxonomy";
+import keywordSuggestions from "./keyword-suggestions";
 
 export default {
-	taxonomy: taxonomy
+	keywordSuggestions: keywordSuggestions
 };

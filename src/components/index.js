@@ -21,12 +21,34 @@ class App extends React.Component {
 		}
 	}
 
+	renderTaxonomyEntry(entry, i) {
+		return (<span key={i}>
+			← {entry}
+		</span>)
+	}
+
+	renderSuggestion(suggestion, i) {
+		return (<li key={i}>
+			<button>+</button>
+			<a href={suggestion.url}>
+				{suggestion.label}
+			</a>
+			{suggestion.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}
+		</li>);
+	}
+
 	render() {
-		console.log(this.props)
+		const { suggestions } = this.props.keywordSuggestions;
+		console.log(suggestions);
 		return (
 			<div className="app">
-				<input onChange={this.onChange.bind(this)} value={this.state.keywordSearch} onKeyPress = {this.handleKeyPress.bind(this)}  />
-				<button onClick={() => this.props.onSearch(this.state.keywordSearch)}>Search keyword in inpho</button>
+				<div className="keyword-search">
+					<input onChange={this.onChange.bind(this)} value={this.state.keywordSearch} onKeyPress = {this.handleKeyPress.bind(this)}  />
+					<button onClick={() => this.props.onSearch(this.state.keywordSearch)}>Search keyword in inpho</button>
+				</div>
+				<ul className="keyword-suggestions">
+					{suggestions.map(this.renderSuggestion.bind(this))}
+				</ul>
 			</div>
 		);
 	}

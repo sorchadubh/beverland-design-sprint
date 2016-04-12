@@ -20171,21 +20171,47 @@ var _taxonomy = require("../taxonomy");
 
 var _taxonomy2 = _interopRequireDefault(_taxonomy);
 
+var findTaxonomyEntry = function findTaxonomyEntry(entries, taxId, found) {
+	var path = arguments.length <= 3 || arguments[3] === undefined ? [] : arguments[3];
+
+	for (var i in entries) {
+		var entry = entries[i];
+		if (entry.ID === taxId) {
+			found.path = path.concat(entry.label);
+		}
+		findTaxonomyEntry(entry.childConcepts, taxId, found, path.concat(entry.label));
+	}
+};
+
+var findPath = function findPath(taxId) {
+	var f = { path: [] };
+	findTaxonomyEntry(_taxonomy2["default"], taxId, f);
+
+	return f.path.reverse();
+};
+
 var searchKeyword = function searchKeyword(query) {
 	return function (dispatch) {
+		if (query.length < 2) {
+			return;
+		}
 		(0, _xhr2["default"])({ url: "https://inpho.cogs.indiana.edu/entity.json?q=" + query, method: "GET" }, function (err, resp, body) {
 			var results = JSON.parse(body).responseData.results.map(function (r) {
-				var spread = (_keywordMap2["default"][r.ID] || []).map(function (t) {
+				var spread = (_keywordMap2["default"][r.ID] || []).map(function (taxId) {
 					return {
 						label: r.label,
-						taxonomyEntry: t,
+						taxonomyEntry: findPath(taxId),
 						url: "https://inpho.cogs.indiana.edu" + r.url
 					};
 				});
 				if (spread.length === 0) {
-					spread.push({ label: r.label, url: "https://inpho.cogs.indiana.edu" + r.url });
+					spread.push({ label: r.label, url: "https://inpho.cogs.indiana.edu" + r.url, taxonomyEntry: [] });
 				}
 				return spread;
+			}).reduce(function (a, b) {
+				return a.concat(b);
+			}, []).sort(function (a, b) {
+				return b.taxonomyEntry.length - a.taxonomyEntry.length;
 			});
 
 			console.log(results);
@@ -20251,21 +20277,61 @@ var App = (function (_React$Component) {
 			}
 		}
 	}, {
+		key: "renderTaxonomyEntry",
+		value: function renderTaxonomyEntry(entry, i) {
+			return _react2["default"].createElement(
+				"span",
+				{ key: i },
+				"← ",
+				entry
+			);
+		}
+	}, {
+		key: "renderSuggestion",
+		value: function renderSuggestion(suggestion, i) {
+			return _react2["default"].createElement(
+				"li",
+				{ key: i },
+				_react2["default"].createElement(
+					"button",
+					null,
+					"+"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ href: suggestion.url },
+					suggestion.label
+				),
+				suggestion.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))
+			);
+		}
+	}, {
 		key: "render",
 		value: function render() {
 			var _this = this;
 
-			console.log(this.props);
+			var suggestions = this.props.keywordSuggestions.suggestions;
+
+			console.log(suggestions);
 			return _react2["default"].createElement(
 				"div",
 				{ className: "app" },
-				_react2["default"].createElement("input", { onChange: this.onChange.bind(this), value: this.state.keywordSearch, onKeyPress: this.handleKeyPress.bind(this) }),
 				_react2["default"].createElement(
-					"button",
-					{ onClick: function () {
-							return _this.props.onSearch(_this.state.keywordSearch);
-						} },
-					"Search keyword in inpho"
+					"div",
+					{ className: "keyword-search" },
+					_react2["default"].createElement("input", { onChange: this.onChange.bind(this), value: this.state.keywordSearch, onKeyPress: this.handleKeyPress.bind(this) }),
+					_react2["default"].createElement(
+						"button",
+						{ onClick: function () {
+								return _this.props.onSearch(_this.state.keywordSearch);
+							} },
+						"Search keyword in inpho"
+					)
+				),
+				_react2["default"].createElement(
+					"ul",
+					{ className: "keyword-suggestions" },
+					suggestions.map(this.renderSuggestion.bind(this))
 				)
 			);
 		}
@@ -20330,16 +20396,16 @@ Object.defineProperty(exports, "__esModule", {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _taxonomy = require("./taxonomy");
+var _keywordSuggestions = require("./keyword-suggestions");
 
-var _taxonomy2 = _interopRequireDefault(_taxonomy);
+var _keywordSuggestions2 = _interopRequireDefault(_keywordSuggestions);
 
 exports["default"] = {
-	taxonomy: _taxonomy2["default"]
+	keywordSuggestions: _keywordSuggestions2["default"]
 };
 module.exports = exports["default"];
 
-},{"./taxonomy":184}],184:[function(require,module,exports){
+},{"./keyword-suggestions":184}],184:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20349,36 +20415,24 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var initialState = {
-	taxonomy: null
-};
-
-var parseResults = function parseResults(results) {
-	var current = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-
-	var parsed = results.filter(function (r) {
-		return r.parent === current;
-	}).map(function (cur) {
-		cur.childConcepts = parseResults(results, cur.ID);
-		return cur;
-	});
-
-	return parsed;
+	suggestions: []
 };
 
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
 
 	switch (action.type) {
-		case "LOAD_TAXONOMY":
+		case "RECEIVE_KEYWORD":
 			state = _extends({}, state, {
-				taxonomy: parseResults(action.data.responseData.results)
+				suggestions: action.results
 			});
 			break;
 	};
 	return state;
 };
 
-exports.parseResults = parseResults;
+;
+module.exports = exports["default"];
 
 },{}],185:[function(require,module,exports){
 "use strict";
