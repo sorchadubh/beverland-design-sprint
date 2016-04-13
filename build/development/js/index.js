@@ -20233,6 +20233,16 @@ var setCurrentLetter = function setCurrentLetter(idx) {
 	};
 };
 
+var login = function login(username, password) {
+	return function (dispatch) {
+		(0, _xhr2["default"])({ url: "http://localhost:5001/user", method: "POST", body: JSON.stringify({ username: username, password: password }) }, function (err, resp, body) {
+			if (err !== null) {
+				dispatch({ type: "LOGIN_USER", data: JSON.parse(body) });
+			}
+		});
+	};
+};
+
 exports["default"] = {
 	onSearch: function onSearch(query) {
 		return _store2["default"].dispatch(searchKeyword(query));
@@ -20242,11 +20252,14 @@ exports["default"] = {
 	},
 	onSelect: function onSelect(idx) {
 		return _store2["default"].dispatch(setCurrentLetter(idx));
+	},
+	onLogin: function onLogin(username, password) {
+		return _store2["default"].dispatch(login(username, password));
 	}
 };
 module.exports = exports["default"];
 
-},{"../keyword-map":184,"../store":188,"../taxonomy":189,"xhr":176}],180:[function(require,module,exports){
+},{"../keyword-map":184,"../store":189,"../taxonomy":190,"xhr":176}],180:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20271,9 +20284,11 @@ var _letter = require("./letter");
 
 var _letter2 = _interopRequireDefault(_letter);
 
-var _keywordSuggest = require("./keyword-suggest");
+var _loginForm = require("./login-form");
 
-var _keywordSuggest2 = _interopRequireDefault(_keywordSuggest);
+var _loginForm2 = _interopRequireDefault(_loginForm);
+
+/*import KeywordSuggest from "./keyword-suggest";*/
 
 var App = (function (_React$Component) {
 	_inherits(App, _React$Component);
@@ -20290,10 +20305,12 @@ var App = (function (_React$Component) {
 			var _props$letters = this.props.letters;
 			var letters = _props$letters.letters;
 			var current = _props$letters.current;
+			var username = this.props.user.username;
 
 			return _react2["default"].createElement(
 				"div",
 				{ className: "app" },
+				username === null ? _react2["default"].createElement(_loginForm2["default"], this.props) : username,
 				_react2["default"].createElement(_letter2["default"], { current: current, letter: letters[current], onSelect: this.props.onSelect, total: letters.length - 1 })
 			);
 		}
@@ -20304,6 +20321,7 @@ var App = (function (_React$Component) {
 
 App.propTypes = {
 	letters: _react2["default"].PropTypes.object,
+	user: _react2["default"].PropTypes.object,
 	onSelect: _react2["default"].PropTypes.func
 };
 
@@ -20311,126 +20329,7 @@ exports["default"] = App;
 module.exports = exports["default"];
 /*				<KeywordSuggest {...this.props} /> */
 
-},{"./keyword-suggest":181,"./letter":182,"react":166}],181:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _react = require("react");
-
-var _react2 = _interopRequireDefault(_react);
-
-var KeywordSuggest = (function (_React$Component) {
-	_inherits(KeywordSuggest, _React$Component);
-
-	function KeywordSuggest(props) {
-		_classCallCheck(this, KeywordSuggest);
-
-		_get(Object.getPrototypeOf(KeywordSuggest.prototype), "constructor", this).call(this, props);
-
-		this.state = {
-			keywordSearch: ""
-		};
-	}
-
-	_createClass(KeywordSuggest, [{
-		key: "onChange",
-		value: function onChange(ev) {
-			this.setState({
-				keywordSearch: ev.target.value
-			});
-		}
-	}, {
-		key: "handleKeyPress",
-		value: function handleKeyPress(ev) {
-			if (ev.key === "Enter") {
-				this.props.onSearch(this.state.keywordSearch);
-			}
-		}
-	}, {
-		key: "renderTaxonomyEntry",
-		value: function renderTaxonomyEntry(entry, i) {
-			return _react2["default"].createElement(
-				"span",
-				{ key: i },
-				"← ",
-				entry
-			);
-		}
-	}, {
-		key: "renderSuggestion",
-		value: function renderSuggestion(suggestion, i) {
-			return _react2["default"].createElement(
-				"li",
-				{ key: i },
-				_react2["default"].createElement(
-					"button",
-					null,
-					"+"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ href: suggestion.url, target: "_blank" },
-					suggestion.label
-				),
-				suggestion.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))
-			);
-		}
-	}, {
-		key: "render",
-		value: function render() {
-			var _this = this;
-
-			var suggestions = this.props.keywordSuggestions.suggestions;
-
-			return _react2["default"].createElement(
-				"div",
-				{ className: "suggestor" },
-				_react2["default"].createElement(
-					"div",
-					{ className: "keyword-search" },
-					_react2["default"].createElement("input", { onChange: this.onChange.bind(this), onKeyPress: this.handleKeyPress.bind(this), value: this.state.keywordSearch }),
-					_react2["default"].createElement(
-						"button",
-						{ onClick: function () {
-								return _this.props.onSearch(_this.state.keywordSearch);
-							} },
-						"Search keyword in inpho"
-					)
-				),
-				_react2["default"].createElement(
-					"ul",
-					{ className: "keyword-suggestions" },
-					suggestions.map(this.renderSuggestion.bind(this))
-				)
-			);
-		}
-	}]);
-
-	return KeywordSuggest;
-})(_react2["default"].Component);
-
-KeywordSuggest.propTypes = {
-	keywordSuggestions: _react2["default"].PropTypes.object,
-	onSearch: _react2["default"].PropTypes.func
-};
-
-exports["default"] = KeywordSuggest;
-module.exports = exports["default"];
-
-},{"react":166}],182:[function(require,module,exports){
+},{"./letter":181,"./login-form":182,"react":166}],181:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20585,9 +20484,9 @@ var Letter = (function (_React$Component) {
 							"Keywords: "
 						),
 						_react2["default"].createElement(
-							"button",
+							"span",
 							null,
-							"Add keyword"
+							"TODO"
 						)
 					)
 				)
@@ -20606,6 +20505,80 @@ Letter.propTypes = {
 };
 
 exports["default"] = Letter;
+module.exports = exports["default"];
+
+},{"react":166}],182:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var LoginForm = (function (_React$Component) {
+	_inherits(LoginForm, _React$Component);
+
+	function LoginForm(props) {
+		_classCallCheck(this, LoginForm);
+
+		_get(Object.getPrototypeOf(LoginForm.prototype), "constructor", this).call(this, props);
+
+		this.state = {
+			username: "",
+			password: ""
+		};
+	}
+
+	_createClass(LoginForm, [{
+		key: "onNameChange",
+		value: function onNameChange(ev) {
+			this.setState({ username: ev.target.value });
+		}
+	}, {
+		key: "onPassChange",
+		value: function onPassChange(ev) {
+			this.setState({ password: ev.target.value });
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			var _this = this;
+
+			return _react2["default"].createElement(
+				"div",
+				{ className: "login-form" },
+				_react2["default"].createElement("input", { placeholder: "Enter username", onChange: this.onNameChange.bind(this), value: this.state.username }),
+				_react2["default"].createElement("input", { type: "password", placeholder: "Enter password", onChange: this.onPassChange.bind(this), value: this.state.password }),
+				_react2["default"].createElement(
+					"button",
+					{ onClick: function () {
+							return _this.props.onLogin(_this.state.username, _this.state.password);
+						} },
+					"Login"
+				)
+			);
+		}
+	}]);
+
+	return LoginForm;
+})(_react2["default"].Component);
+
+LoginForm.propTypes = {};
+
+exports["default"] = LoginForm;
 module.exports = exports["default"];
 
 },{"react":166}],183:[function(require,module,exports){
@@ -20646,7 +20619,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	//	ReactDOM.render(<App {...store.getState()} {...actions} />, document.getElementById("app"));
 });
 
-},{"./actions":179,"./components":180,"./store":188,"react":166,"react-dom":37}],184:[function(require,module,exports){
+},{"./actions":179,"./components":180,"./store":189,"react":166,"react-dom":37}],184:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20672,13 +20645,18 @@ var _letters = require("./letters");
 
 var _letters2 = _interopRequireDefault(_letters);
 
+var _user = require("./user");
+
+var _user2 = _interopRequireDefault(_user);
+
 exports["default"] = {
 	keywordSuggestions: _keywordSuggestions2["default"],
-	letters: _letters2["default"]
+	letters: _letters2["default"],
+	user: _user2["default"]
 };
 module.exports = exports["default"];
 
-},{"./keyword-suggestions":186,"./letters":187}],186:[function(require,module,exports){
+},{"./keyword-suggestions":186,"./letters":187,"./user":188}],186:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20746,6 +20724,36 @@ module.exports = exports["default"];
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var initialState = {
+	username: null,
+	id: null
+};
+
+exports["default"] = function (state, action) {
+	if (state === undefined) state = initialState;
+
+	switch (action.type) {}
+
+	/*		case "RECEIVE_LETTERS":
+ 			state = {...state, ...{
+ 				letters: action.letters,
+ 				current: 0
+ 			}};
+ 			break;
+ 		case "SET_CURRENT_LETTER":
+ 			state = {...state, ...{current: action.current}};
+ 			break;
+ */return state;
+};
+
+module.exports = exports["default"];
+
+},{}],189:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -20776,7 +20784,7 @@ var data = (0, _redux.combineReducers)(_reducers2["default"]);
 exports["default"] = (0, _redux.createStore)(data, (0, _redux.applyMiddleware)(logger, _reduxThunk2["default"]));
 module.exports = exports["default"];
 
-},{"../reducers":185,"redux":173,"redux-thunk":167}],189:[function(require,module,exports){
+},{"../reducers":185,"redux":173,"redux-thunk":167}],190:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

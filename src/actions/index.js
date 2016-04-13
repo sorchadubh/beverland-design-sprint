@@ -51,8 +51,17 @@ const fetchLetters = () => (dispatch) =>
 
 const setCurrentLetter = (idx) => (dispatch) => dispatch({type: "SET_CURRENT_LETTER", current: idx});
 
+const login = (username, password) => (dispatch) => {
+	xhr({url: "http://localhost:5001/user", method: "POST", body: JSON.stringify({username: username, password: password})}, (err, resp, body) => {
+		if (err !== null) {
+			dispatch({type: "LOGIN_USER", data: JSON.parse(body)});
+		}
+	});
+};
+
 export default {
 	onSearch: (query) => store.dispatch(searchKeyword(query)),
 	fetchLetters: () => store.dispatch(fetchLetters()),
-	onSelect: (idx) => store.dispatch(setCurrentLetter(idx))
+	onSelect: (idx) => store.dispatch(setCurrentLetter(idx)),
+	onLogin: (username, password) => store.dispatch(login(username, password))
 };

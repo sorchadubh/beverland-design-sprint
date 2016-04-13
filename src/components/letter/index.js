@@ -47,7 +47,7 @@ class Letter extends React.Component {
 
 				<li>
 					<label>Keywords: </label>
-					<button>Add keyword</button>
+					<span>TODO</span>
 				</li>
 			</ul>
 		</div>);
