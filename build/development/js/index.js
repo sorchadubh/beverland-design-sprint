@@ -20313,7 +20313,7 @@ var App = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"div",
 				{ className: "app" },
-				username === null ? _react2["default"].createElement(_loginForm2["default"], this.props) : username,
+				username === null ? _react2["default"].createElement(_loginForm2["default"], this.props) : "Logged in as " + username,
 				_react2["default"].createElement(_letter2["default"], { current: current, letter: letters[current], onSelect: this.props.onSelect, total: letters.length - 1 })
 			);
 		}
@@ -20746,6 +20746,9 @@ exports["default"] = function (state, action) {
 			});
 			break;
 		case "LOGIN_FAILURE":
+			state = _extends({}, state, { username: null, id: null });
+			break;
+		case "LOGOUT":
 			state = _extends({}, state, { username: null, id: null });
 			break;
 	}

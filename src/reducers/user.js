@@ -14,6 +14,9 @@ export default function(state=initialState, action) {
 		case "LOGIN_FAILURE":
 			state = {...state, ...{username: null, id: null}};
 			break;
+		case "LOGOUT":
+			state = {...state, ...{username: null, id: null}};
+			break;
 	}
 	return state;
 }

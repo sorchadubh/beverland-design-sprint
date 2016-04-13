@@ -13,7 +13,7 @@ class App extends React.Component {
 
 		return (
 			<div className="app">
-				{username === null ? <LoginForm {...this.props} /> : username}
+				{username === null ? <LoginForm {...this.props} /> : `Logged in as ${username}`}
 
 				<Letter current={current} letter={letters[current]} onSelect={this.props.onSelect} total={letters.length - 1} />
 {/*				<KeywordSuggest {...this.props} /> */}
