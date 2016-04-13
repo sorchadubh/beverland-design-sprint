@@ -20847,7 +20847,20 @@ var Letter = (function (_React$Component) {
 										k.label
 									)
 								);
-							}),
+							})
+						)
+					),
+					_react2["default"].createElement(
+						"li",
+						null,
+						_react2["default"].createElement(
+							"label",
+							null,
+							"User keywords: "
+						),
+						_react2["default"].createElement(
+							"ul",
+							null,
 							(userKeywords || []).map(function (k, i) {
 								return _react2["default"].createElement(
 									"li",

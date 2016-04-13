@@ -62,6 +62,11 @@ class Letter extends React.Component {
 					<label>Keywords: </label>
 					<ul>
 						{(letter.keywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
+					</ul>
+				</li>
+				<li>
+					<label>User keywords: </label>
+					<ul>
 						{(userKeywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
 					</ul>
 					{keywordForm}
