@@ -8,7 +8,7 @@ export default function(state=initialState, action) {
 		case "RECEIVE_LETTERS":
 			state = {...state, ...{
 				letters: action.letters,
-				current: 0
+				current: state.current < 0 ? 0 : state.current
 			}};
 			break;
 		case "SET_CURRENT_LETTER":

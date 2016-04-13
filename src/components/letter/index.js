@@ -1,4 +1,6 @@
 import React from "react";
+import KeywordForm from "./form";
+
 
 const parseD = (dateStr) => {
 	const day = dateStr.substr(6, 2);
@@ -13,11 +15,15 @@ class Letter extends React.Component {
 
 	render() {
 		const { letter, current, total, onSelect } = this.props;
+		const { username, id } = this.props.user;
 		const nextLink = current < total ?
 			<a onClick={() => onSelect(current + 1)}>&gt;&gt;</a> : null;
 
 		const prevLink = current > 0 ?
 			<a onClick={() => onSelect(current - 1)}>&lt;&lt;</a> : null;
+
+		const keywordForm = (username && id) ?
+			<KeywordForm {...this.props} /> : null;
 
 
 		return (<div>
@@ -54,7 +60,10 @@ class Letter extends React.Component {
 
 				<li>
 					<label>Keywords: </label>
-					<span>TODO</span>
+					<ul>
+						{(letter.keywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
+					</ul>
+					{keywordForm}
 				</li>
 			</ul>
 		</div>);
@@ -65,7 +74,8 @@ Letter.propTypes = {
 	current: React.PropTypes.number,
 	letter: React.PropTypes.object,
 	onSelect: React.PropTypes.func,
-	total: React.PropTypes.number
+	total: React.PropTypes.number,
+	user: React.PropTypes.object
 };
 
 export default Letter;

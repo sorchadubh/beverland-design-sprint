@@ -1,6 +1,7 @@
 var app = require("express")();
 var bodyParser = require("body-parser");
 var MongoClient = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectId;
 
 var url = 'mongodb://localhost:27017/beverland';
 
@@ -23,6 +24,17 @@ MongoClient.connect(url, function(err, db) {
 
 
 	app.put("/letters/:id", function(req, res) {
+		var collection = db.collection("letters");
+		var keyword = req.body.keyword;
+		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
+			console.log("/letters/:id Any error? ", err);
+			var keywords = item.keywords || [];
+			keywords.push(keyword);
+			item.keywords = keywords;
+			console.log(item);
+			collection.updateOne({_id: new ObjectId(item._id)}, {$set: item});
+			res.end();
+		});
 	//	var record = req.body;
 	//	record._id = req.params.domain + "_" + new Date().getTime();
 	//

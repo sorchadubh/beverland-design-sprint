@@ -45,21 +45,32 @@ const searchKeyword = (query) => (dispatch) => {
 };
 
 const fetchLetters = () => (dispatch) =>
-	xhr({url: "http://localhost:5001/letters"}, (err, resp, body) => {
+	xhr({url: `http://${location.hostname}:5001/letters`}, (err, resp, body) => {
 		dispatch({type: "RECEIVE_LETTERS", letters: JSON.parse(body)});
 	});
 
 const setCurrentLetter = (idx) => (dispatch) => dispatch({type: "SET_CURRENT_LETTER", current: idx});
 
 const login = (username, password) => (dispatch) => {
-	xhr({url: "http://localhost:5001/user", method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({username: username, password: password})}, (err, resp, body) => {
+	xhr({url: `http://${location.hostname}:5001/user`, method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({username: username, password: password})}, (err, resp, body) => {
 		const data = JSON.parse(body);
 		if(data.notFound) {
 			dispatch({type: "LOGIN_FAILURE", name: username});
 		} else {
 			dispatch({type: "LOGIN_USER", name: data.name, id: data._id});
 		}
+	});
+};
 
+const addKeyword = (suggestion) => (dispatch, getState) => {
+	const { letters, current } = getState().letters;
+	const { id } = getState().user;
+
+	xhr({url: `http://${location.hostname}:5001/letters/${letters[current]._id}`, method: "PUT", headers: {"Content-type": "application/json"}, body: JSON.stringify({
+		keyword: suggestion,
+		userId: id
+	})}, () => {
+		dispatch(fetchLetters());
 	});
 };
 
@@ -67,5 +78,6 @@ export default {
 	onSearch: (query) => store.dispatch(searchKeyword(query)),
 	fetchLetters: () => store.dispatch(fetchLetters()),
 	onSelect: (idx) => store.dispatch(setCurrentLetter(idx)),
-	onLogin: (username, password) => store.dispatch(login(username, password))
+	onLogin: (username, password) => store.dispatch(login(username, password)),
+	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion))
 };
