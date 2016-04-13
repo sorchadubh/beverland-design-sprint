@@ -1,8 +1,6 @@
 let initialState = {
 	letters: [],
-	current: -1,
-	offset: 0,
-	limit: 10
+	current: -1
 };
 
 export default function(state=initialState, action) {
@@ -13,7 +11,10 @@ export default function(state=initialState, action) {
 				current: 0
 			}};
 			break;
-	};
+		case "SET_CURRENT_LETTER":
+			state = {...state, ...{current: action.current}};
+			break;
+	}
 	return state;
-};
+}
 

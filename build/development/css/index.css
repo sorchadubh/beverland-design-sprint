@@ -135,6 +135,13 @@ html {
 *:after {
   box-sizing: inherit;
 }
+a {
+  color: #00f;
+  cursor: pointer;
+}
+a:hover {
+  text-decoration: underline;
+}
 body {
   font-family: sans-serif;
 }

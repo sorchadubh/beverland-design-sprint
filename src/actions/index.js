@@ -11,7 +11,7 @@ const findTaxonomyEntry = (entries, taxId, found, path = []) => {
 		}
 		findTaxonomyEntry(entry.childConcepts, taxId, found, path.concat(entry.label));
 	}
-}
+};
 
 
 const findPath = (taxId) => {
@@ -34,22 +34,25 @@ const searchKeyword = (query) => (dispatch) => {
 				};
 			});
 			if (spread.length === 0) {
-				spread.push({label: r.label, url: `https://inpho.cogs.indiana.edu${r.url}`, taxonomyEntry: []})
+				spread.push({label: r.label, url: `https://inpho.cogs.indiana.edu${r.url}`, taxonomyEntry: []});
 			}
 			return spread;
 		}).reduce((a, b) => a.concat(b), [])
 		.sort((a, b) => b.taxonomyEntry.length - a.taxonomyEntry.length);
 
-		dispatch({type: "RECEIVE_KEYWORD", results: results  })
+		dispatch({type: "RECEIVE_KEYWORD", results: results });
 	});
 };
 
 const fetchLetters = () => (dispatch) =>
-	xhr({url: "letters.json"}, (err, resp, body) => {
-		dispatch({type: "RECEIVE_LETTERS", letters: JSON.parse(body)})
+	xhr({url: "http://localhost:5001/letters"}, (err, resp, body) => {
+		dispatch({type: "RECEIVE_LETTERS", letters: JSON.parse(body)});
 	});
+
+const setCurrentLetter = (idx) => (dispatch) => dispatch({type: "SET_CURRENT_LETTER", current: idx});
 
 export default {
 	onSearch: (query) => store.dispatch(searchKeyword(query)),
-	fetchLetters: () => store.dispatch(fetchLetters())
+	fetchLetters: () => store.dispatch(fetchLetters()),
+	onSelect: (idx) => store.dispatch(setCurrentLetter(idx))
 };
