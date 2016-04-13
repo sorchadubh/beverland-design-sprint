@@ -20214,9 +20214,15 @@ var searchKeyword = function searchKeyword(query) {
 				return b.taxonomyEntry.length - a.taxonomyEntry.length;
 			});
 
-			console.log(results);
-
 			dispatch({ type: "RECEIVE_KEYWORD", results: results });
+		});
+	};
+};
+
+var _fetchLetters = function _fetchLetters() {
+	return function (dispatch) {
+		return (0, _xhr2["default"])({ url: "letters.json" }, function (err, resp, body) {
+			dispatch({ type: "RECEIVE_LETTERS", letters: JSON.parse(body) });
 		});
 	};
 };
@@ -20224,11 +20230,14 @@ var searchKeyword = function searchKeyword(query) {
 exports["default"] = {
 	onSearch: function onSearch(query) {
 		return _store2["default"].dispatch(searchKeyword(query));
+	},
+	fetchLetters: function fetchLetters() {
+		return _store2["default"].dispatch(_fetchLetters());
 	}
 };
 module.exports = exports["default"];
 
-},{"../keyword-map":182,"../store":185,"../taxonomy":186,"xhr":176}],180:[function(require,module,exports){
+},{"../keyword-map":182,"../store":186,"../taxonomy":187,"xhr":176}],180:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20306,13 +20315,49 @@ var App = (function (_React$Component) {
 			);
 		}
 	}, {
+		key: "renderLetter",
+		value: function renderLetter(letter, i) {
+			return _react2["default"].createElement(
+				"li",
+				{ key: i },
+				_react2["default"].createElement(
+					"dl",
+					null,
+					_react2["default"].createElement(
+						"dt",
+						null,
+						"Addressee"
+					),
+					_react2["default"].createElement(
+						"dd",
+						null,
+						letter["Addressee"]
+					),
+					_react2["default"].createElement(
+						"dt",
+						null,
+						"Date"
+					),
+					_react2["default"].createElement(
+						"dd",
+						null,
+						letter["Date"]
+					)
+				)
+			);
+		}
+	}, {
 		key: "render",
 		value: function render() {
 			var _this = this;
 
 			var suggestions = this.props.keywordSuggestions.suggestions;
+			var _props$letters = this.props.letters;
+			var letters = _props$letters.letters;
+			var current = _props$letters.current;
+			var offset = _props$letters.offset;
+			var limit = _props$letters.limit;
 
-			console.log(suggestions);
 			return _react2["default"].createElement(
 				"div",
 				{ className: "app" },
@@ -20332,6 +20377,11 @@ var App = (function (_React$Component) {
 					"ul",
 					{ className: "keyword-suggestions" },
 					suggestions.map(this.renderSuggestion.bind(this))
+				),
+				_react2["default"].createElement(
+					"ul",
+					{ className: "letters" },
+					letters.slice(offset, offset + limit).map(this.renderLetter.bind(this))
 				)
 			);
 		}
@@ -20371,14 +20421,17 @@ var _components = require("./components");
 var _components2 = _interopRequireDefault(_components);
 
 document.addEventListener("DOMContentLoaded", function () {
+
 	_store2["default"].subscribe(function () {
 		return _reactDom2["default"].render(_react2["default"].createElement(_components2["default"], _extends({}, _store2["default"].getState(), _actions2["default"])), document.getElementById("app"));
 	});
 
-	_reactDom2["default"].render(_react2["default"].createElement(_components2["default"], _extends({}, _store2["default"].getState(), _actions2["default"])), document.getElementById("app"));
+	_actions2["default"].fetchLetters();
+
+	//	ReactDOM.render(<App {...store.getState()} {...actions} />, document.getElementById("app"));
 });
 
-},{"./actions":179,"./components":180,"./store":185,"react":166,"react-dom":37}],182:[function(require,module,exports){
+},{"./actions":179,"./components":180,"./store":186,"react":166,"react-dom":37}],182:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20400,12 +20453,17 @@ var _keywordSuggestions = require("./keyword-suggestions");
 
 var _keywordSuggestions2 = _interopRequireDefault(_keywordSuggestions);
 
+var _letters = require("./letters");
+
+var _letters2 = _interopRequireDefault(_letters);
+
 exports["default"] = {
-	keywordSuggestions: _keywordSuggestions2["default"]
+	keywordSuggestions: _keywordSuggestions2["default"],
+	letters: _letters2["default"]
 };
 module.exports = exports["default"];
 
-},{"./keyword-suggestions":184}],184:[function(require,module,exports){
+},{"./keyword-suggestions":184,"./letters":185}],184:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20441,6 +20499,39 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var initialState = {
+	letters: [],
+	current: -1,
+	offset: 0,
+	limit: 10
+};
+
+exports["default"] = function (state, action) {
+	if (state === undefined) state = initialState;
+
+	switch (action.type) {
+		case "RECEIVE_LETTERS":
+			state = _extends({}, state, {
+				letters: action.letters,
+				current: 0
+			});
+			break;
+	};
+	return state;
+};
+
+;
+module.exports = exports["default"];
+
+},{}],186:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var _redux = require("redux");
@@ -20470,7 +20561,7 @@ var data = (0, _redux.combineReducers)(_reducers2["default"]);
 exports["default"] = (0, _redux.createStore)(data, (0, _redux.applyMiddleware)(logger, _reduxThunk2["default"]));
 module.exports = exports["default"];
 
-},{"../reducers":183,"redux":173,"redux-thunk":167}],186:[function(require,module,exports){
+},{"../reducers":183,"redux":173,"redux-thunk":167}],187:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
