@@ -20789,6 +20789,20 @@ var Letter = (function (_React$Component) {
 						_react2["default"].createElement(
 							"label",
 							null,
+							"Sender: "
+						),
+						_react2["default"].createElement(
+							"span",
+							null,
+							letter.Sender
+						)
+					),
+					_react2["default"].createElement(
+						"li",
+						null,
+						_react2["default"].createElement(
+							"label",
+							null,
 							"Date: "
 						),
 						_react2["default"].createElement(

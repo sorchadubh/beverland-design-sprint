@@ -44,6 +44,10 @@ class Letter extends React.Component {
 					<span>{letter.Addressee}</span>
 				</li>
 				<li>
+					<label>Sender: </label>
+					<span>{letter.Sender}</span>
+				</li>
+				<li>
 					<label>Date: </label>
 					<span>{parseD(letter.Date)}</span>
 				</li>
