@@ -20337,7 +20337,11 @@ var App = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"div",
 				{ className: "app" },
-				username === null ? _react2["default"].createElement(_loginForm2["default"], this.props) : "Logged in as " + username,
+				username === null ? _react2["default"].createElement(_loginForm2["default"], this.props) : _react2["default"].createElement(
+					"span",
+					{ className: "login-form" },
+					"Logged in as " + username
+				),
 				_react2["default"].createElement(_letter2["default"], _extends({}, this.props, { current: current, letter: letters[current], onSelect: this.props.onSelect, total: letters.length - 1 }))
 			);
 		}
@@ -20450,7 +20454,7 @@ var KeywordSuggest = (function (_React$Component) {
 				_react2["default"].createElement(
 					"div",
 					{ className: "keyword-search" },
-					_react2["default"].createElement("input", { onChange: this.onChange.bind(this), onKeyPress: this.handleKeyPress.bind(this), value: this.state.keywordSearch }),
+					_react2["default"].createElement("input", { onChange: this.onChange.bind(this), onKeyPress: this.handleKeyPress.bind(this), placeholder: "Enter search...", value: this.state.keywordSearch }),
 					_react2["default"].createElement(
 						"button",
 						{ onClick: function () {
@@ -20724,7 +20728,7 @@ var Letter = (function (_React$Component) {
 				),
 				_react2["default"].createElement(
 					"ul",
-					null,
+					{ className: "letter-metadata" },
 					_react2["default"].createElement(
 						"li",
 						null,
@@ -21060,8 +21064,8 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var initialState = {
-	username: "researcher1",
-	id: "570e1803e005626069a2af0b"
+	username: null,
+	id: null
 };
 
 exports["default"] = function (state, action) {

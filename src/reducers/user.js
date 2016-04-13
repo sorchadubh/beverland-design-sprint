@@ -1,6 +1,6 @@
 let initialState = {
-	username: "researcher1",
-	id: "570e1803e005626069a2af0b"
+	username: null,
+	id: null
 };
 
 export default function(state=initialState, action) {

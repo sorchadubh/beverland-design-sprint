@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	);
 
 
-	actions.fetchLetters()
+	actions.fetchLetters();
 
 //	ReactDOM.render(<App {...store.getState()} {...actions} />, document.getElementById("app"));
 });

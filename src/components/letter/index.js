@@ -32,7 +32,7 @@ class Letter extends React.Component {
 				H. Beverland to {letter.Addressee} ({parseD(letter.Date)})
 				{nextLink}
 			</h2>
-			<ul>
+			<ul className="letter-metadata">
 				<li>
 					<label>Addressee: </label>
 					<span>{letter.Addressee}</span>

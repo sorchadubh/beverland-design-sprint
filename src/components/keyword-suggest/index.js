@@ -44,7 +44,7 @@ class KeywordSuggest extends React.Component {
 		return (
 			<div className="suggestor">
 				<div className="keyword-search">
-					<input onChange={this.onChange.bind(this)} onKeyPress={this.handleKeyPress.bind(this)} value={this.state.keywordSearch} />
+					<input onChange={this.onChange.bind(this)} onKeyPress={this.handleKeyPress.bind(this)} placeholder="Enter search..." value={this.state.keywordSearch} />
 					<button onClick={() => this.props.onSearch(this.state.keywordSearch)}>Search</button>
 				</div>
 				<ul className="keyword-suggestions">

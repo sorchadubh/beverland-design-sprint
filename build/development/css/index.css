@@ -145,11 +145,42 @@ a:hover {
 body {
   font-family: sans-serif;
 }
-.app .keyword-search {
-  padding: 1em;
+.app {
+  padding: 20px;
 }
-.app .keyword-suggestions {
-  padding: 1em;
+.app h2 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+.app h2 a {
+  font-size: 0.5em;
+  margin: 10px;
+  display: inline-block;
+}
+.app h3 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 1.2em;
+}
+.app .login-form {
+  float: right;
+}
+.app .letter-metadata > li > label {
+  display: inline-block;
+  width: 200px;
+  font-weight: bold;
+  vertical-align: top;
+}
+.app .letter-metadata > li > label + ul {
+  display: inline-block;
+}
+.app .letter-metadata input[type=radio] + label {
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.app .suggestor {
+  margin-top: 10px;
 }
 .app .keyword-suggestions > li {
   min-height: 2em;
