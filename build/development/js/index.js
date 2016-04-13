@@ -20356,7 +20356,12 @@ var _react = require("react");
 var _react2 = _interopRequireDefault(_react);
 
 var parseD = function parseD(dateStr) {
-	return dateStr.substr(6, 2) + "-" + dateStr.substr(4, 2) + "-" + dateStr.substr(0, 4);
+	var day = dateStr.substr(6, 2);
+	var mon = dateStr.substr(4, 2);
+	var year = dateStr.substr(0, 4);
+	var dd = day === "00" ? "" : day + "-";
+	var mm = mon === "00" ? "" : mon + "-";
+	return "" + dd + mm + year;
 };
 
 var Letter = (function (_React$Component) {

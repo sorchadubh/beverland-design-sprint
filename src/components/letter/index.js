@@ -1,6 +1,13 @@
 import React from "react";
 
-const parseD = (dateStr) => `${dateStr.substr(6, 2)}-${dateStr.substr(4, 2)}-${dateStr.substr(0, 4)}`;
+const parseD = (dateStr) => {
+	const day = dateStr.substr(6, 2);
+	const mon = dateStr.substr(4, 2);
+	const year = dateStr.substr(0, 4);
+	const dd = day === "00" ? "" : `${day}-`;
+	const mm = mon === "00" ? "" : `${mon}-`;
+	return `${dd}${mm}${year}`;
+};
 
 class Letter extends React.Component {
 
