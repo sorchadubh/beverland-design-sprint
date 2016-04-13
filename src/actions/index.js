@@ -40,12 +40,16 @@ const searchKeyword = (query) => (dispatch) => {
 		}).reduce((a, b) => a.concat(b), [])
 		.sort((a, b) => b.taxonomyEntry.length - a.taxonomyEntry.length);
 
-		console.log(results);
-
 		dispatch({type: "RECEIVE_KEYWORD", results: results  })
 	});
 };
 
+const fetchLetters = () => (dispatch) =>
+	xhr({url: "letters.json"}, (err, resp, body) => {
+		dispatch({type: "RECEIVE_LETTERS", letters: JSON.parse(body)})
+	});
+
 export default {
-	onSearch: (query) => store.dispatch(searchKeyword(query))
+	onSearch: (query) => store.dispatch(searchKeyword(query)),
+	fetchLetters: () => store.dispatch(fetchLetters())
 };

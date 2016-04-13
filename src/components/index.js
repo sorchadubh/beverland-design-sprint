@@ -48,8 +48,7 @@ class App extends React.Component {
 
 	render() {
 		const { suggestions } = this.props.keywordSuggestions;
-		const { offset, limit } = this.props.pagination;
-		const { letters } = this.props;
+		const { letters, current, offset, limit } = this.props.letters;
 		return (
 			<div className="app">
 				<div className="keyword-search">

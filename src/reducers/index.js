@@ -1,6 +1,6 @@
 import keywordSuggestions from "./keyword-suggestions";
-import pagination from "./pagination";
+import letters from "./letters";
 export default {
 	keywordSuggestions: keywordSuggestions,
-	pagination: pagination
+	letters: letters
 };
