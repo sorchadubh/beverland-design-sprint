@@ -20262,6 +20262,23 @@ var addKeyword = function addKeyword(suggestion) {
 	};
 };
 
+var saveUserKeyword = function saveUserKeyword(suggestion) {
+	return function (dispatch, getState) {
+		var _getState$letters2 = getState().letters;
+		var letters = _getState$letters2.letters;
+		var current = _getState$letters2.current;
+		var id = getState().user.id;
+
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/keywords", method: "POST", headers: { "Content-type": "application/json" }, body: JSON.stringify({
+				keyword: suggestion,
+				userId: id,
+				letterId: letters[current]._id
+			}) }, function () {
+			dispatch(_fetchLetters());
+		});
+	};
+};
+
 exports["default"] = {
 	onSearch: function onSearch(query) {
 		return _store2["default"].dispatch(searchKeyword(query));
@@ -20278,8 +20295,8 @@ exports["default"] = {
 	onSelectKeyword: function onSelectKeyword(suggestion) {
 		return _store2["default"].dispatch(addKeyword(suggestion));
 	},
-	onSaveKeyword: function onSaveKeyword() {
-		return alert("TODO: save new keyword");
+	onSaveKeyword: function onSaveKeyword(suggestion) {
+		return _store2["default"].dispatch(saveUserKeyword(suggestion));
 	}
 };
 module.exports = exports["default"];
@@ -20562,7 +20579,8 @@ var KeywordForm = (function (_React$Component) {
 		value: function saveNewKeyword() {
 			var newKeyword = {
 				label: this.state.newKeyword,
-				taxonomyEntry: [this.state.parentConcept.label].concat(this.state.parentConcept.taxonomyEntry)
+				taxonomyEntry: [this.state.parentConcept.label].concat(this.state.parentConcept.taxonomyEntry),
+				parentUrl: this.state.parentConcept.url
 			};
 			this.props.onSaveKeyword(newKeyword);
 		}
@@ -21064,8 +21082,8 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var initialState = {
-	username: null,
-	id: null
+	username: "researcher1",
+	id: "570e1803e005626069a2af0b"
 };
 
 exports["default"] = function (state, action) {

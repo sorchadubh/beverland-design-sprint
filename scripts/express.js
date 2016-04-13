@@ -31,18 +31,9 @@ MongoClient.connect(url, function(err, db) {
 			var keywords = item.keywords || [];
 			keywords.push(keyword);
 			item.keywords = keywords;
-			console.log(item);
 			collection.updateOne({_id: new ObjectId(item._id)}, {$set: item});
 			res.end();
 		});
-	//	var record = req.body;
-	//	record._id = req.params.domain + "_" + new Date().getTime();
-	//
-	//	entities[req.params.domain][record._id] = req.body;
-	//	res
-	//		.set("Location", "/api/v4/domain/" + req.params.domain + "/" + record._id)
-	//		.status(201)
-	//		.end();
 	});
 
 	app.post("/user", function(req, res) {
@@ -55,15 +46,45 @@ MongoClient.connect(url, function(err, db) {
 		});
 	});
 
+	app.post("/keywords", function(req, res) {
+		var data = req.body;
+		var keywordColl = db.collection("keywords");
+		keywordColl.insertOne({
+			label: data.keyword.label,
+			userId: data.userId,
+			parentUrl: data.keyword.parentUrl,
+			taxonomyEntry: data.keyword.taxonomyEntry
+		}, function(err, result) {
+			var letterColl = db.collection("letters");
+			letterColl.findOne({_id: new ObjectId(data.letterId)}, function(err, item) {
+				var userKeywords = item.userKeywords || [];
+				userKeywords.push(result.ops[0]._id);
+				item.userKeywords = userKeywords;
+				letterColl.updateOne({_id: new ObjectId(item._id)}, {$set: item});
+				res.end();
+			});
+		});
+	});
+
+	app.get("/letters/:id/keywords", function(req, res) {
+		var collection = db.collection("letters");
+		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
+			var kwColl = db.collection("keywords");
+			var objectIds = (item.userKeywords || []).map(function(kwId) {
+				return new ObjectId(kwId);
+			});
+			kwColl.find({_id: {$in: objectIds}}).toArray(function (err, docs) {
+				res.send(docs);
+			});
+		});
+	});
+
 	app.get("/letters", function(req, res) {
 		var collection = db.collection("letters");
 		collection.find({}).toArray(function(err, docs) {
 			console.log("/letters: Any error?", err);
 			res.send(docs);
 		});
-	//	var respData = clone(entities[req.params.domain][req.params.id]);
-	//	respData["@relations"] = relationsFor(req.params.domain.replace(/^ww/, "").replace(/s$/, ""), req.params.id);
-	//	res.send(respData);
 	});
 
 	app.listen(5001, function() {

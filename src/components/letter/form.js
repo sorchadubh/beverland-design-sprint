@@ -39,7 +39,8 @@ class KeywordForm extends React.Component {
 	saveNewKeyword() {
 		const newKeyword = {
 			label: this.state.newKeyword,
-			taxonomyEntry: [this.state.parentConcept.label].concat(this.state.parentConcept.taxonomyEntry)
+			taxonomyEntry: [this.state.parentConcept.label].concat(this.state.parentConcept.taxonomyEntry),
+			parentUrl: this.state.parentConcept.url
 		};
 		this.props.onSaveKeyword(newKeyword);
 	}

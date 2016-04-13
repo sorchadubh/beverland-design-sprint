@@ -74,11 +74,23 @@ const addKeyword = (suggestion) => (dispatch, getState) => {
 	});
 };
 
+const saveUserKeyword = (suggestion) => (dispatch, getState) => {
+	const { letters, current } = getState().letters;
+	const { id } = getState().user;
+	xhr({url: `http://${location.hostname}:5001/keywords`, method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({
+		keyword: suggestion,
+		userId: id,
+		letterId: letters[current]._id
+	})}, () => {
+		dispatch(fetchLetters());
+	});
+};
+
 export default {
 	onSearch: (query) => store.dispatch(searchKeyword(query)),
 	fetchLetters: () => store.dispatch(fetchLetters()),
 	onSelect: (idx) => store.dispatch(setCurrentLetter(idx)),
 	onLogin: (username, password) => store.dispatch(login(username, password)),
 	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion)),
-	onSaveKeyword: () => alert("TODO: save new keyword")
+	onSaveKeyword: (suggestion) => store.dispatch(saveUserKeyword(suggestion))
 };
