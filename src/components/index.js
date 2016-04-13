@@ -8,14 +8,14 @@ import LoginForm from "./login-form";
 class App extends React.Component {
 
 	render() {
-		const { letters, current } = this.props.letters;
+		const { letters, current, userKeywords } = this.props.letters;
 		const { username } = this.props.user;
 
 		return (
 			<div className="app">
 				{username === null ? <LoginForm {...this.props} /> : <span className="login-form">{`Logged in as ${username}`}</span>}
 
-				<Letter {...this.props} current={current} letter={letters[current]} onSelect={this.props.onSelect} total={letters.length - 1} />
+				<Letter {...this.props} current={current} letter={letters[current]} onSelect={this.props.onSelect} total={letters.length - 1} userKeywords={userKeywords} />
 {/*				<KeywordSuggest {...this.props} /> */}
 			</div>
 		);

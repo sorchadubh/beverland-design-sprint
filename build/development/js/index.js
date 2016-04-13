@@ -20219,17 +20219,24 @@ var searchKeyword = function searchKeyword(query) {
 	};
 };
 
-var _fetchLetters = function _fetchLetters() {
-	return function (dispatch) {
-		return (0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters" }, function (err, resp, body) {
-			dispatch({ type: "RECEIVE_LETTERS", letters: JSON.parse(body) });
+var setCurrentLetter = function setCurrentLetter(idx) {
+	return function (dispatch, getState) {
+		var letters = getState().letters.letters;
+
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters/" + letters[idx]._id + "/keywords" }, function (err, resp, body) {
+			dispatch({ type: "SET_CURRENT_LETTER", current: idx, userKeywords: JSON.parse(body) });
 		});
 	};
 };
 
-var setCurrentLetter = function setCurrentLetter(idx) {
-	return function (dispatch) {
-		return dispatch({ type: "SET_CURRENT_LETTER", current: idx });
+var _fetchLetters = function _fetchLetters() {
+	return function (dispatch, getState) {
+		return (0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters" }, function (err, resp, body) {
+			dispatch({ type: "RECEIVE_LETTERS", letters: JSON.parse(body) });
+			var current = getState().letters.current;
+
+			dispatch(setCurrentLetter(current));
+		});
 	};
 };
 
@@ -20349,6 +20356,7 @@ var App = (function (_React$Component) {
 			var _props$letters = this.props.letters;
 			var letters = _props$letters.letters;
 			var current = _props$letters.current;
+			var userKeywords = _props$letters.userKeywords;
 			var username = this.props.user.username;
 
 			return _react2["default"].createElement(
@@ -20359,7 +20367,7 @@ var App = (function (_React$Component) {
 					{ className: "login-form" },
 					"Logged in as " + username
 				),
-				_react2["default"].createElement(_letter2["default"], _extends({}, this.props, { current: current, letter: letters[current], onSelect: this.props.onSelect, total: letters.length - 1 }))
+				_react2["default"].createElement(_letter2["default"], _extends({}, this.props, { current: current, letter: letters[current], onSelect: this.props.onSelect, total: letters.length - 1, userKeywords: userKeywords }))
 			);
 		}
 	}]);
@@ -20708,6 +20716,7 @@ var Letter = (function (_React$Component) {
 			var current = _props.current;
 			var total = _props.total;
 			var onSelect = _props.onSelect;
+			var userKeywords = _props.userKeywords;
 			var _props$user = this.props.user;
 			var username = _props$user.username;
 			var id = _props$user.id;
@@ -20829,6 +20838,17 @@ var Letter = (function (_React$Component) {
 							"ul",
 							null,
 							(letter.keywords || []).map(function (k, i) {
+								return _react2["default"].createElement(
+									"li",
+									{ key: i },
+									_react2["default"].createElement(
+										"a",
+										null,
+										k.label
+									)
+								);
+							}),
+							(userKeywords || []).map(function (k, i) {
 								return _react2["default"].createElement(
 									"li",
 									{ key: i },
@@ -21050,7 +21070,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var initialState = {
 	letters: [],
-	current: -1
+	current: 0,
+	userKeywords: []
 };
 
 exports["default"] = function (state, action) {
@@ -21060,11 +21081,14 @@ exports["default"] = function (state, action) {
 		case "RECEIVE_LETTERS":
 			state = _extends({}, state, {
 				letters: action.letters,
-				current: state.current < 0 ? 0 : state.current
+				userKeywords: []
 			});
 			break;
 		case "SET_CURRENT_LETTER":
-			state = _extends({}, state, { current: action.current });
+			state = _extends({}, state, {
+				current: action.current,
+				userKeywords: action.userKeywords
+			});
 			break;
 	}
 	return state;

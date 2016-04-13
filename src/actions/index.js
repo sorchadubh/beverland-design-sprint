@@ -44,12 +44,22 @@ const searchKeyword = (query) => (dispatch) => {
 	});
 };
 
-const fetchLetters = () => (dispatch) =>
+
+const setCurrentLetter = (idx) => (dispatch, getState) => {
+	const { letters } = getState().letters;
+
+	xhr({url: `http://${location.hostname}:5001/letters/${letters[idx]._id}/keywords`}, (err, resp, body) => {
+		dispatch({type: "SET_CURRENT_LETTER", current: idx, userKeywords: JSON.parse(body)});
+	});
+};
+
+const fetchLetters = () => (dispatch, getState) =>
 	xhr({url: `http://${location.hostname}:5001/letters`}, (err, resp, body) => {
 		dispatch({type: "RECEIVE_LETTERS", letters: JSON.parse(body)});
-	});
+		const { current } = getState().letters;
 
-const setCurrentLetter = (idx) => (dispatch) => dispatch({type: "SET_CURRENT_LETTER", current: idx});
+		dispatch(setCurrentLetter(current));
+	});
 
 const login = (username, password) => (dispatch) => {
 	xhr({url: `http://${location.hostname}:5001/user`, method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({username: username, password: password})}, (err, resp, body) => {

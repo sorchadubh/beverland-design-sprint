@@ -1,6 +1,7 @@
 let initialState = {
 	letters: [],
-	current: -1
+	current: 0,
+	userKeywords: []
 };
 
 export default function(state=initialState, action) {
@@ -8,11 +9,14 @@ export default function(state=initialState, action) {
 		case "RECEIVE_LETTERS":
 			state = {...state, ...{
 				letters: action.letters,
-				current: state.current < 0 ? 0 : state.current
+				userKeywords: []
 			}};
 			break;
 		case "SET_CURRENT_LETTER":
-			state = {...state, ...{current: action.current}};
+			state = {...state, ...{
+				current: action.current,
+				userKeywords: action.userKeywords
+			}};
 			break;
 	}
 	return state;

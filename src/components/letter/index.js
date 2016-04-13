@@ -14,7 +14,7 @@ const parseD = (dateStr) => {
 class Letter extends React.Component {
 
 	render() {
-		const { letter, current, total, onSelect } = this.props;
+		const { letter, current, total, onSelect, userKeywords } = this.props;
 		const { username, id } = this.props.user;
 		const nextLink = current < total ?
 			<a onClick={() => onSelect(current + 1)}>&gt;&gt;</a> : null;
@@ -62,6 +62,7 @@ class Letter extends React.Component {
 					<label>Keywords: </label>
 					<ul>
 						{(letter.keywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
+						{(userKeywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
 					</ul>
 					{keywordForm}
 				</li>
