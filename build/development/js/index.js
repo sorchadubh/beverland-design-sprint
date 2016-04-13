@@ -20235,9 +20235,12 @@ var setCurrentLetter = function setCurrentLetter(idx) {
 
 var login = function login(username, password) {
 	return function (dispatch) {
-		(0, _xhr2["default"])({ url: "http://localhost:5001/user", method: "POST", body: JSON.stringify({ username: username, password: password }) }, function (err, resp, body) {
-			if (err !== null) {
-				dispatch({ type: "LOGIN_USER", data: JSON.parse(body) });
+		(0, _xhr2["default"])({ url: "http://localhost:5001/user", method: "POST", headers: { "Content-type": "application/json" }, body: JSON.stringify({ username: username, password: password }) }, function (err, resp, body) {
+			var data = JSON.parse(body);
+			if (data.notFound) {
+				dispatch({ type: "LOGIN_FAILURE", name: username });
+			} else {
+				dispatch({ type: "LOGIN_USER", name: data.name, id: data._id });
 			}
 		});
 	};
@@ -20724,6 +20727,9 @@ module.exports = exports["default"];
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var initialState = {
 	username: null,
 	id: null
@@ -20732,18 +20738,18 @@ var initialState = {
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
 
-	switch (action.type) {}
-
-	/*		case "RECEIVE_LETTERS":
- 			state = {...state, ...{
- 				letters: action.letters,
- 				current: 0
- 			}};
- 			break;
- 		case "SET_CURRENT_LETTER":
- 			state = {...state, ...{current: action.current}};
- 			break;
- */return state;
+	switch (action.type) {
+		case "LOGIN_USER":
+			state = _extends({}, state, {
+				username: action.name,
+				id: action.id
+			});
+			break;
+		case "LOGIN_FAILURE":
+			state = _extends({}, state, { username: null, id: null });
+			break;
+	}
+	return state;
 };
 
 module.exports = exports["default"];

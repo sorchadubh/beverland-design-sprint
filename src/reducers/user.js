@@ -5,15 +5,15 @@ let initialState = {
 
 export default function(state=initialState, action) {
 	switch (action.type) {
-/*		case "RECEIVE_LETTERS":
+		case "LOGIN_USER":
 			state = {...state, ...{
-				letters: action.letters,
-				current: 0
+				username: action.name,
+				id: action.id
 			}};
 			break;
-		case "SET_CURRENT_LETTER":
-			state = {...state, ...{current: action.current}};
+		case "LOGIN_FAILURE":
+			state = {...state, ...{username: null, id: null}};
 			break;
-*/	}
+	}
 	return state;
 }

@@ -52,10 +52,14 @@ const fetchLetters = () => (dispatch) =>
 const setCurrentLetter = (idx) => (dispatch) => dispatch({type: "SET_CURRENT_LETTER", current: idx});
 
 const login = (username, password) => (dispatch) => {
-	xhr({url: "http://localhost:5001/user", method: "POST", body: JSON.stringify({username: username, password: password})}, (err, resp, body) => {
-		if (err !== null) {
-			dispatch({type: "LOGIN_USER", data: JSON.parse(body)});
+	xhr({url: "http://localhost:5001/user", method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({username: username, password: password})}, (err, resp, body) => {
+		const data = JSON.parse(body);
+		if(data.notFound) {
+			dispatch({type: "LOGIN_FAILURE", name: username});
+		} else {
+			dispatch({type: "LOGIN_USER", name: data.name, id: data._id});
 		}
+
 	});
 };
 
