@@ -37,9 +37,19 @@ class App extends React.Component {
 		</li>);
 	}
 
+	renderLetter(letter, i) {
+		return (<li key={i}>
+			<dl>
+				<dt>Addressee</dt><dd>{letter["Addressee"]}</dd>
+				<dt>Date</dt><dd>{letter["Date"]}</dd>
+			</dl>
+		</li>)
+	}
+
 	render() {
 		const { suggestions } = this.props.keywordSuggestions;
-		console.log(suggestions);
+		const { offset, limit } = this.props.pagination;
+		const { letters } = this.props;
 		return (
 			<div className="app">
 				<div className="keyword-search">
@@ -48,6 +58,9 @@ class App extends React.Component {
 				</div>
 				<ul className="keyword-suggestions">
 					{suggestions.map(this.renderSuggestion.bind(this))}
+				</ul>
+				<ul className="letters">
+					{letters.slice(offset, offset + limit).map(this.renderLetter.bind(this))}
 				</ul>
 			</div>
 		);
