@@ -13,6 +13,12 @@ const parseD = (dateStr) => {
 
 class Letter extends React.Component {
 
+	renderTaxonomyEntry(entry, i) {
+		return (<span className="less-dense" key={i}>
+			← {entry}
+		</span>);
+	}
+
 	render() {
 		const { letter, current, total, onSelect, userKeywords } = this.props;
 		const { username, id } = this.props.user;
@@ -29,7 +35,7 @@ class Letter extends React.Component {
 		return (<div>
 			<h2>
 				{prevLink}
-				H. Beverland to {letter.Addressee} ({parseD(letter.Date)})
+				{letter.Sender} to {letter.Addressee} ({parseD(letter.Date)})
 				{nextLink}
 			</h2>
 			<ul className="letter-metadata">
@@ -43,8 +49,8 @@ class Letter extends React.Component {
 				</li>
 
 				<li>
-					<label>City sent from: </label>
-					<span>{letter["City send from"]}</span>
+					<label>Language: </label>
+					<span>{letter["Language"]}</span>
 				</li>
 
 
@@ -55,19 +61,19 @@ class Letter extends React.Component {
 
 				<li>
 					<label>Incipit: </label>
-					<span>{letter.Incipit}</span>
+					<span style={{fontStyle: "italic"}}>{letter.Incipit}</span>
 				</li>
 
 				<li>
 					<label>Keywords: </label>
 					<ul>
-						{(letter.keywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
+						{(letter.keywords || []).map((k, i) => <li key={i}><a href={k.url} target="_blank">{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}</li>)}
 					</ul>
 				</li>
 				<li>
 					<label>User keywords: </label>
 					<ul>
-						{(userKeywords || []).map((k, i) => <li key={i}><a>{k.label}</a></li>)}
+						{(userKeywords || []).map((k, i) => <li key={i}><a>{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}</li>)}
 					</ul>
 					{keywordForm}
 				</li>
@@ -81,7 +87,8 @@ Letter.propTypes = {
 	letter: React.PropTypes.object,
 	onSelect: React.PropTypes.func,
 	total: React.PropTypes.number,
-	user: React.PropTypes.object
+	user: React.PropTypes.object,
+	userKeywords: React.PropTypes.array
 };
 
 export default Letter;

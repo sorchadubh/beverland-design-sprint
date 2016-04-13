@@ -8,6 +8,7 @@ client = MongoClient()
 db = client.beverland
 db.users.drop()
 db.letters.drop()
+db.keywords.drop()
 
 db.users.insert_one({"name": "researcher1", "password": "123"})
 db.users.insert_one({"name": "researcher2", "password": "123"})

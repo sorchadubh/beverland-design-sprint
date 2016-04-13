@@ -20709,8 +20709,20 @@ var Letter = (function (_React$Component) {
 	}
 
 	_createClass(Letter, [{
+		key: "renderTaxonomyEntry",
+		value: function renderTaxonomyEntry(entry, i) {
+			return _react2["default"].createElement(
+				"span",
+				{ className: "less-dense", key: i },
+				"← ",
+				entry
+			);
+		}
+	}, {
 		key: "render",
 		value: function render() {
+			var _this = this;
+
 			var _props = this.props;
 			var letter = _props.letter;
 			var current = _props.current;
@@ -20746,7 +20758,8 @@ var Letter = (function (_React$Component) {
 					"h2",
 					null,
 					prevLink,
-					"H. Beverland to ",
+					letter.Sender,
+					" to ",
 					letter.Addressee,
 					" (",
 					parseD(letter.Date),
@@ -20790,12 +20803,12 @@ var Letter = (function (_React$Component) {
 						_react2["default"].createElement(
 							"label",
 							null,
-							"City sent from: "
+							"Language: "
 						),
 						_react2["default"].createElement(
 							"span",
 							null,
-							letter["City send from"]
+							letter["Language"]
 						)
 					),
 					_react2["default"].createElement(
@@ -20822,7 +20835,7 @@ var Letter = (function (_React$Component) {
 						),
 						_react2["default"].createElement(
 							"span",
-							null,
+							{ style: { fontStyle: "italic" } },
 							letter.Incipit
 						)
 					),
@@ -20843,9 +20856,10 @@ var Letter = (function (_React$Component) {
 									{ key: i },
 									_react2["default"].createElement(
 										"a",
-										null,
+										{ href: k.url, target: "_blank" },
 										k.label
-									)
+									),
+									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this))
 								);
 							})
 						)
@@ -20869,7 +20883,8 @@ var Letter = (function (_React$Component) {
 										"a",
 										null,
 										k.label
-									)
+									),
+									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this))
 								);
 							})
 						),
@@ -20888,7 +20903,8 @@ Letter.propTypes = {
 	letter: _react2["default"].PropTypes.object,
 	onSelect: _react2["default"].PropTypes.func,
 	total: _react2["default"].PropTypes.number,
-	user: _react2["default"].PropTypes.object
+	user: _react2["default"].PropTypes.object,
+	userKeywords: _react2["default"].PropTypes.array
 };
 
 exports["default"] = Letter;

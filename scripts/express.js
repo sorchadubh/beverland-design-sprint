@@ -69,13 +69,18 @@ MongoClient.connect(url, function(err, db) {
 	app.get("/letters/:id/keywords", function(req, res) {
 		var collection = db.collection("letters");
 		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
-			var kwColl = db.collection("keywords");
-			var objectIds = (item.userKeywords || []).map(function(kwId) {
-				return new ObjectId(kwId);
-			});
-			kwColl.find({_id: {$in: objectIds}}).toArray(function (err, docs) {
-				res.send(docs);
-			});
+			console.log("ERROR? ", err, item);
+			if(item === null) {
+				res.send([]);
+			} else {
+				var kwColl = db.collection("keywords");
+				var objectIds = (item.userKeywords || []).map(function(kwId) {
+					return new ObjectId(kwId);
+				});
+				kwColl.find({_id: {$in: objectIds}}).toArray(function (err, docs) {
+					res.send(docs);
+				});
+			}
 		});
 	});
 

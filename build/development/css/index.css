@@ -165,6 +165,9 @@ body {
 .app .login-form {
   float: right;
 }
+.app .letter-metadata > li {
+  margin-bottom: 6px;
+}
 .app .letter-metadata > li > label {
   display: inline-block;
   width: 200px;
@@ -178,6 +181,12 @@ body {
   cursor: pointer;
   margin-bottom: 10px;
   display: inline-block;
+}
+.app .letter-metadata .less-dense {
+  color: #777;
+  margin-left: 5px;
+  display: inline-block;
+  font-style: italic;
 }
 .app .suggestor {
   margin-top: 10px;
