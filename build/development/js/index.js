@@ -20277,6 +20277,9 @@ exports["default"] = {
 	},
 	onSelectKeyword: function onSelectKeyword(suggestion) {
 		return _store2["default"].dispatch(addKeyword(suggestion));
+	},
+	onSaveKeyword: function onSaveKeyword() {
+		return alert("TODO: save new keyword");
 	}
 };
 module.exports = exports["default"];
@@ -20424,7 +20427,7 @@ var KeywordSuggest = (function (_React$Component) {
 					{ onClick: function () {
 							return _this.props.onSelectKeyword(suggestion);
 						} },
-					"Add keyword"
+					this.props.buttonLabel
 				),
 				_react2["default"].createElement(
 					"a",
@@ -20469,6 +20472,7 @@ var KeywordSuggest = (function (_React$Component) {
 })(_react2["default"].Component);
 
 KeywordSuggest.propTypes = {
+	buttonLabel: _react2["default"].PropTypes.string,
 	keywordSuggestions: _react2["default"].PropTypes.object,
 	onSearch: _react2["default"].PropTypes.func,
 	onSelectKeyword: _react2["default"].PropTypes.func
@@ -20483,6 +20487,8 @@ module.exports = exports["default"];
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -20502,18 +20508,97 @@ var _keywordSuggest = require("../keyword-suggest");
 
 var _keywordSuggest2 = _interopRequireDefault(_keywordSuggest);
 
+var modes = {
+	ADD: "add-keyword",
+	SEARCH: "search-keyword"
+};
+
 var KeywordForm = (function (_React$Component) {
 	_inherits(KeywordForm, _React$Component);
 
-	function KeywordForm() {
+	function KeywordForm(props) {
 		_classCallCheck(this, KeywordForm);
 
-		_get(Object.getPrototypeOf(KeywordForm.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(KeywordForm.prototype), "constructor", this).call(this, props);
+
+		this.state = {
+			mode: modes.SEARCH,
+			newKeyword: "",
+			parentConcept: null
+		};
 	}
 
 	_createClass(KeywordForm, [{
+		key: "setMode",
+		value: function setMode(mode) {
+			this.setState({ mode: mode });
+		}
+	}, {
+		key: "renderTaxonomyEntry",
+		value: function renderTaxonomyEntry(entry, i) {
+			return _react2["default"].createElement(
+				"span",
+				{ key: i },
+				"← ",
+				entry
+			);
+		}
+	}, {
+		key: "onNewKeyWordChange",
+		value: function onNewKeyWordChange(ev) {
+			this.setState({ newKeyword: ev.target.value });
+		}
+	}, {
+		key: "setParentConcept",
+		value: function setParentConcept(suggestion) {
+			this.setState({ parentConcept: suggestion });
+		}
+	}, {
+		key: "saveNewKeyword",
+		value: function saveNewKeyword() {
+			var newKeyword = {
+				label: this.state.newKeyword,
+				taxonomyEntry: [this.state.parentConcept.label].concat(this.state.parentConcept.taxonomyEntry)
+			};
+			this.props.onSaveKeyword(newKeyword);
+		}
+	}, {
 		key: "render",
 		value: function render() {
+			var addSuggester = this.state.parentConcept ? null : _react2["default"].createElement(_keywordSuggest2["default"], _extends({}, this.props, { buttonLabel: "Select this parent concept", onSelectKeyword: this.setParentConcept.bind(this) }));
+
+			var parentConcept = this.state.parentConcept ? _react2["default"].createElement(
+				"span",
+				null,
+				"← ",
+				this.state.parentConcept.label,
+				this.state.parentConcept.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this)),
+				_react2["default"].createElement(
+					"button",
+					{ onClick: this.setParentConcept.bind(this, null) },
+					"X"
+				)
+			) : null;
+
+			var saveButton = this.state.parentConcept && this.state.newKeyword.length > 2 ? _react2["default"].createElement(
+				"div",
+				null,
+				_react2["default"].createElement(
+					"button",
+					{ onClick: this.saveNewKeyword.bind(this) },
+					"Save"
+				)
+			) : null;
+
+			var form = this.state.mode === modes.ADD ? _react2["default"].createElement(
+				"div",
+				null,
+				_react2["default"].createElement("input", { onChange: this.onNewKeyWordChange.bind(this), placeholder: "Enter name...", type: "text", value: this.state.newKeyword }),
+				parentConcept,
+				saveButton,
+				addSuggester
+			) : _react2["default"].createElement(_keywordSuggest2["default"], _extends({}, this.props, { buttonLabel: "Add this keyword", onSelectKeyword: this.props.onSelectKeyword }));
+
 			return _react2["default"].createElement(
 				"div",
 				null,
@@ -20522,13 +20607,30 @@ var KeywordForm = (function (_React$Component) {
 					null,
 					"Add keyword"
 				),
-				_react2["default"].createElement(_keywordSuggest2["default"], this.props)
+				_react2["default"].createElement("input", { checked: this.state.mode === modes.SEARCH, id: "search-keyword", onChange: this.setMode.bind(this, modes.SEARCH), type: "radio" }),
+				_react2["default"].createElement(
+					"label",
+					{ htmlFor: "search-keyword" },
+					"Search a keyword"
+				),
+				_react2["default"].createElement("input", { checked: this.state.mode === modes.ADD, id: "add-keyword", onChange: this.setMode.bind(this, modes.ADD), type: "radio" }),
+				_react2["default"].createElement(
+					"label",
+					{ htmlFor: "add-keyword" },
+					"Add a new user keyword"
+				),
+				form
 			);
 		}
 	}]);
 
 	return KeywordForm;
 })(_react2["default"].Component);
+
+KeywordForm.propTypes = {
+	onSaveKeyword: _react2["default"].PropTypes.func,
+	onSelectKeyword: _react2["default"].PropTypes.func
+};
 
 exports["default"] = KeywordForm;
 module.exports = exports["default"];

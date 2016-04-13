@@ -29,7 +29,9 @@ class KeywordSuggest extends React.Component {
 
 	renderSuggestion(suggestion, i) {
 		return (<li key={i}>
-			<button onClick={() => this.props.onSelectKeyword(suggestion)}>Add keyword</button>
+			<button onClick={() => this.props.onSelectKeyword(suggestion)}>
+				{this.props.buttonLabel}
+			</button>
 			<a href={suggestion.url} target="_blank">
 				{suggestion.label}
 			</a>
@@ -54,6 +56,7 @@ class KeywordSuggest extends React.Component {
 }
 
 KeywordSuggest.propTypes = {
+	buttonLabel: React.PropTypes.string,
 	keywordSuggestions: React.PropTypes.object,
 	onSearch: React.PropTypes.func,
 	onSelectKeyword: React.PropTypes.func

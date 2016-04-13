@@ -79,5 +79,6 @@ export default {
 	fetchLetters: () => store.dispatch(fetchLetters()),
 	onSelect: (idx) => store.dispatch(setCurrentLetter(idx)),
 	onLogin: (username, password) => store.dispatch(login(username, password)),
-	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion))
+	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion)),
+	onSaveKeyword: () => alert("TODO: save new keyword")
 };
