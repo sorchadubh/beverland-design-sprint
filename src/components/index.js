@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import Letter from "./letter";
 import LoginForm from "./login-form";
 import KeywordInfo from "./keyword-info";
@@ -25,7 +26,7 @@ class App extends React.Component {
 
 	toggleOpen() {
 		if(this.state.listOpen) {
-			this.setState({listOpen: false});
+			this.setState({listOpen: false}, () => { ReactDOM.findDOMNode(this).querySelector("#list").scrollTop = 0; });
 		} else {
 			this.setState({listOpen: true});
 		}
@@ -43,7 +44,7 @@ class App extends React.Component {
 
 		return (
 			<div className="app">
-				<div style={this.state.listOpen ? openStyle : closedStyle}>
+				<div id="list" style={this.state.listOpen ? openStyle : closedStyle}>
 					<button onClick={this.toggleOpen.bind(this)}>{this.state.listOpen ? "Close": "List of letters"}</button>
 					<ul>
 						{letters.map((letter, i) => (<li key={i}>

@@ -1,5 +1,6 @@
 import React from "react";
 import KeywordSuggest from "../keyword-suggest";
+import TaxonomyBrowse from "../taxonomy-browse";
 
 const modes = {
 	ADD: "add-keyword",
@@ -34,6 +35,7 @@ class KeywordForm extends React.Component {
 
 	setParentConcept(suggestion) {
 		this.setState({parentConcept: suggestion});
+		console.log(suggestion);
 	}
 
 	saveNewKeyword() {
@@ -65,7 +67,7 @@ class KeywordForm extends React.Component {
 		const saveButton = this.state.parentConcept && this.state.newKeyword.length > 2 ?
 			<div><button onClick={this.saveNewKeyword.bind(this)}>Save</button></div> : null;
 
-		const form = this.state.mode === modes.ADD ?
+		const suggestForm = this.state.mode === modes.ADD ?
 			(<div>
 				<input onChange={this.onNewKeyWordChange.bind(this)} placeholder="Enter name..." type="text" value={this.state.newKeyword} />
 				{parentConcept}
@@ -74,13 +76,19 @@ class KeywordForm extends React.Component {
 			</div>) :
 			<KeywordSuggest {...this.props} buttonLabel="Add this keyword" onSelectKeyword={this.props.onSelectKeyword} useUserSuggest={true} />;
 
+		const taxonomyBrowse = this.state.mode === modes.ADD ?
+			<TaxonomyBrowse {...this.props} buttonLabel="Select this parent concept" onSelect={this.setParentConcept.bind(this)} /> :
+			<TaxonomyBrowse {...this.props} buttonLabel="Add concept as keyword" onSelect={this.props.onSelectKeyword} />;
+
+
 		return (<div>
 			<h3>Add keyword</h3>
 			<input checked={this.state.mode === modes.SEARCH} id="search-keyword" onChange={this.setMode.bind(this, modes.SEARCH)} type="radio" />
 			<label htmlFor="search-keyword">Search a keyword</label>
 			<input checked={this.state.mode === modes.ADD} id="add-keyword" onChange={this.setMode.bind(this, modes.ADD)} type="radio" />
 			<label htmlFor="add-keyword">Add a new user keyword</label>
-			{form}
+			{suggestForm}
+			{taxonomyBrowse}
 		</div>);
 	}
 }
