@@ -39,15 +39,17 @@ class TaxonomyBrowse extends React.Component {
 	onSelect() {
 		const { taxonomy } = this.props;
 		const entry = getIn(clone(this.state.path).slice(0, this.state.path.length - 1), taxonomy);
-		console.log({
+		const parents = this.getParentsByPath(taxonomy, clone(this.state.path)).reverse();
+		parents.shift();
+
+		this.props.onSelect({
 			label: entry.label,
-			taxonomyEntry: [],
+			taxonomyEntry: parents.map((e) => e.label),
 			url: `https://inpho.cogs.indiana.edu${entry.url}`
 		});
 	}
 
-
-	renderParents(entries, path) {
+	getParentsByPath(entries, path) {
 		let out = [];
 		while(path.length > 0) {
 			const idx = path.shift();
@@ -55,9 +57,14 @@ class TaxonomyBrowse extends React.Component {
 			entries = entries[idx].childConcepts;
 			path.shift();
 		}
+		return out;
+	}
+
+	renderParents(entries, path) {
+
 		return (<h3>
 			<a onClick={this.popIndex.bind(this)}>←</a>
-			{out.map((o, i) => <span key={i}>{i > 0 ? "←" : ""} {o.label}</span>)}
+			{this.getParentsByPath(entries, path).map((o, i) => <span key={i}>{i > 0 ? "←" : ""} {o.label}</span>)}
 			<button onClick={this.onSelect.bind(this)}>{this.props.buttonLabel}</button>
 		</h3>);
 	}

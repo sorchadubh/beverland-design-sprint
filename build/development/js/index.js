@@ -21447,15 +21447,20 @@ var TaxonomyBrowse = (function (_React$Component) {
 			var taxonomy = this.props.taxonomy;
 
 			var entry = getIn((0, _cloneDeep2["default"])(this.state.path).slice(0, this.state.path.length - 1), taxonomy);
-			console.log({
+			var parents = this.getParentsByPath(taxonomy, (0, _cloneDeep2["default"])(this.state.path)).reverse();
+			parents.shift();
+
+			this.props.onSelect({
 				label: entry.label,
-				taxonomyEntry: [],
+				taxonomyEntry: parents.map(function (e) {
+					return e.label;
+				}),
 				url: "https://inpho.cogs.indiana.edu" + entry.url
 			});
 		}
 	}, {
-		key: "renderParents",
-		value: function renderParents(entries, path) {
+		key: "getParentsByPath",
+		value: function getParentsByPath(entries, path) {
 			var out = [];
 			while (path.length > 0) {
 				var idx = path.shift();
@@ -21463,6 +21468,12 @@ var TaxonomyBrowse = (function (_React$Component) {
 				entries = entries[idx].childConcepts;
 				path.shift();
 			}
+			return out;
+		}
+	}, {
+		key: "renderParents",
+		value: function renderParents(entries, path) {
+
 			return _react2["default"].createElement(
 				"h3",
 				null,
@@ -21471,7 +21482,7 @@ var TaxonomyBrowse = (function (_React$Component) {
 					{ onClick: this.popIndex.bind(this) },
 					"←"
 				),
-				out.map(function (o, i) {
+				this.getParentsByPath(entries, path).map(function (o, i) {
 					return _react2["default"].createElement(
 						"span",
 						{ key: i },
