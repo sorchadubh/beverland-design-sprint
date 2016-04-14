@@ -71,13 +71,23 @@ class Letter extends React.Component {
 				<li>
 					<label>Keywords: </label>
 					<ul>
-						{(letter.keywords || []).map((k, i) => <li key={i}><a href={k.url} target="_blank">{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}</li>)}
+						{(letter.keywords || []).map((k, i) => (
+							<li key={i}>
+								<a href={k.url} target="_blank">{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}
+								{(username && id) ? <button onClick={() => this.props.onDeleteKeywordFromLetter(k, letter._id)} style={{marginLeft: "8px"}}>X</button> : null}
+							</li>
+						))}
 					</ul>
 				</li>
 				<li>
 					<label>User keywords: </label>
 					<ul>
-						{(userKeywords || []).map((k, i) => <li key={i}><a onClick={() => this.props.onFocusKeyword(k)}>{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}</li>)}
+						{(userKeywords || []).map((k, i) => (
+							<li key={i}>
+								<a onClick={() => this.props.onFocusKeyword(k)}>{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}
+								{(username && id) ? <button onClick={() => this.props.onDeleteKeywordFromLetter(k, letter._id)} style={{marginLeft: "8px"}}>X</button> : null}
+							</li>
+						))}
 					</ul>
 					{keywordForm}
 				</li>
@@ -89,6 +99,7 @@ class Letter extends React.Component {
 Letter.propTypes = {
 	current: React.PropTypes.number,
 	letter: React.PropTypes.object,
+	onDeleteKeywordFromLetter: React.PropTypes.func,
 	onFocusKeyword: React.PropTypes.func,
 	onSelect: React.PropTypes.func,
 	total: React.PropTypes.number,

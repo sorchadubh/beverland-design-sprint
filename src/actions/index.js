@@ -113,6 +113,12 @@ const fetchKeyword = (keyword) => (dispatch) => {
 	});
 };
 
+const deleteKeywordFromLetter = (keyword, letterId) => (dispatch) => {
+	xhr({url: `http://${location.hostname}:5001/letters/${letterId}/keywords`, method: "DELETE", headers: {"Content-type": "application/json"}, body: JSON.stringify(keyword)}, () => {
+		dispatch(fetchLetters());
+	});
+};
+
 export default {
 	onSearch: (query) => store.dispatch(searchKeyword(query)),
 	fetchLetters: () => store.dispatch(fetchLetters()),
@@ -121,5 +127,6 @@ export default {
 	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion)),
 	onSaveKeyword: (suggestion) => store.dispatch(saveUserKeyword(suggestion)),
 	onFocusKeyword: (keyword) => store.dispatch(fetchKeyword(keyword)),
-	onLetterJump: (letterId) => store.dispatch(setCurrentLetterById(letterId))
+	onLetterJump: (letterId) => store.dispatch(setCurrentLetterById(letterId)),
+	onDeleteKeywordFromLetter: (keyword, letterId) => store.dispatch(deleteKeywordFromLetter(keyword, letterId))
 };

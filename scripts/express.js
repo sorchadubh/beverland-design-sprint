@@ -19,7 +19,6 @@ app.use(function (req, res, next) {
 
 
 MongoClient.connect(url, function(err, db) {
-	console.log("init: Any error?", err);
 
 
 
@@ -27,7 +26,6 @@ MongoClient.connect(url, function(err, db) {
 		var collection = db.collection("letters");
 		var keyword = req.body.keyword;
 		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
-			console.log("/letters/:id Any error? ", err);
 			if (keyword._id) {
 				var userKeywords = item.userKeywords || [];
 				userKeywords.push(keyword._id);
@@ -46,7 +44,6 @@ MongoClient.connect(url, function(err, db) {
 		var login = req.body;
 		var collection = db.collection("users");
 		collection.findOne({name: login.username, password: login.password}, function(err, item) {
-			console.log("/user: Any error?", err, item);
 
 			res.send(item || {notFound: true});
 		});
@@ -96,10 +93,28 @@ MongoClient.connect(url, function(err, db) {
 		});
 	});
 
+	app.delete("/letters/:id/keywords", function(req, res) {
+		var keyword = req.body;
+		var collection = db.collection("letters");
+		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
+			if (keyword._id) {
+				var userKeywords = item.userKeywords || [];
+				var idx = userKeywords.map(function(uk) { return uk.toString(); }).indexOf(keyword._id);
+				if (idx > -1) { item.userKeywords.splice(idx, 1); }
+			} else {
+				var keywords = item.keywords || [];
+				var idx1 = keywords.map(function(k) { return k.url; }).indexOf(keyword.url);
+				if(idx1 > -1) { item.keywords.splice(idx1, 1); }
+			}
+			collection.updateOne({_id: new ObjectId(item._id)}, {$set: item});
+			res.end();
+		});
+		res.end();
+	});
+
 	app.get("/letters/:id/keywords", function(req, res) {
 		var collection = db.collection("letters");
 		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
-			console.log("ERROR? ", err, item);
 			if(item === null) {
 				res.send([]);
 			} else {
@@ -117,7 +132,6 @@ MongoClient.connect(url, function(err, db) {
 	app.get("/letters", function(req, res) {
 		var collection = db.collection("letters");
 		collection.find({}).sort({"Date": 1}).toArray(function(err, docs) {
-			console.log("/letters: Any error?", err);
 			res.send(docs);
 		});
 	});

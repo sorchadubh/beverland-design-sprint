@@ -20307,6 +20307,14 @@ var fetchKeyword = function fetchKeyword(keyword) {
 	};
 };
 
+var deleteKeywordFromLetter = function deleteKeywordFromLetter(keyword, letterId) {
+	return function (dispatch) {
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters/" + letterId + "/keywords", method: "DELETE", headers: { "Content-type": "application/json" }, body: JSON.stringify(keyword) }, function () {
+			dispatch(_fetchLetters());
+		});
+	};
+};
+
 exports["default"] = {
 	onSearch: function onSearch(query) {
 		return _store2["default"].dispatch(searchKeyword(query));
@@ -20331,6 +20339,9 @@ exports["default"] = {
 	},
 	onLetterJump: function onLetterJump(letterId) {
 		return _store2["default"].dispatch(setCurrentLetterById(letterId));
+	},
+	onDeleteKeywordFromLetter: function onDeleteKeywordFromLetter(keyword, letterId) {
+		return _store2["default"].dispatch(deleteKeywordFromLetter(keyword, letterId));
 	}
 };
 module.exports = exports["default"];
@@ -21079,7 +21090,14 @@ var Letter = (function (_React$Component) {
 										{ href: k.url, target: "_blank" },
 										k.label
 									),
-									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this))
+									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this)),
+									username && id ? _react2["default"].createElement(
+										"button",
+										{ onClick: function () {
+												return _this.props.onDeleteKeywordFromLetter(k, letter._id);
+											}, style: { marginLeft: "8px" } },
+										"X"
+									) : null
 								);
 							})
 						)
@@ -21106,7 +21124,14 @@ var Letter = (function (_React$Component) {
 											} },
 										k.label
 									),
-									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this))
+									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this)),
+									username && id ? _react2["default"].createElement(
+										"button",
+										{ onClick: function () {
+												return _this.props.onDeleteKeywordFromLetter(k, letter._id);
+											}, style: { marginLeft: "8px" } },
+										"X"
+									) : null
 								);
 							})
 						),
@@ -21123,6 +21148,7 @@ var Letter = (function (_React$Component) {
 Letter.propTypes = {
 	current: _react2["default"].PropTypes.number,
 	letter: _react2["default"].PropTypes.object,
+	onDeleteKeywordFromLetter: _react2["default"].PropTypes.func,
 	onFocusKeyword: _react2["default"].PropTypes.func,
 	onSelect: _react2["default"].PropTypes.func,
 	total: _react2["default"].PropTypes.number,
