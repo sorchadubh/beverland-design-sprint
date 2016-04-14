@@ -21249,9 +21249,9 @@ var Letter = (function (_React$Component) {
 									) : null
 								);
 							})
-						),
-						keywordForm
-					)
+						)
+					),
+					keywordForm
 				)
 			);
 		}
@@ -21439,8 +21439,6 @@ var TaxonomyBrowse = (function (_React$Component) {
 				)
 			);
 		}
-
-		// { label="Turing Test",  taxonomyEntry=[3],  url="https://inpho.cogs.indiana.edu/idea/990"}
 	}, {
 		key: "onSelect",
 		value: function onSelect() {

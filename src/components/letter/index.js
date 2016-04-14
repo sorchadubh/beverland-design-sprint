@@ -89,8 +89,8 @@ class Letter extends React.Component {
 							</li>
 						))}
 					</ul>
-					{keywordForm}
 				</li>
+				{keywordForm}
 			</ul>
 		</div>);
 	}

@@ -34,8 +34,6 @@ class TaxonomyBrowse extends React.Component {
 		</li>);
 	}
 
-
-	// { label="Turing Test",  taxonomyEntry=[3],  url="https://inpho.cogs.indiana.edu/idea/990"}
 	onSelect() {
 		const { taxonomy } = this.props;
 		const entry = getIn(clone(this.state.path).slice(0, this.state.path.length - 1), taxonomy);
