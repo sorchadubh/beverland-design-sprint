@@ -20195,6 +20195,7 @@ var searchKeyword = function searchKeyword(query) {
 		if (query.length < 2) {
 			return;
 		}
+		dispatch({ type: "REMOTE_KEYWORD_PENDING" });
 		(0, _xhr2["default"])({ url: "https://inpho.cogs.indiana.edu/entity.json?q=" + query, method: "GET" }, function (err, resp, body) {
 			var results = JSON.parse(body).responseData.results.map(function (r) {
 				var spread = (_keywordMap2["default"][r.ID] || []).map(function (taxId) {
@@ -20215,6 +20216,10 @@ var searchKeyword = function searchKeyword(query) {
 			});
 
 			dispatch({ type: "RECEIVE_KEYWORD", results: results });
+		});
+
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/keywords?query=" + query, method: "GET" }, function (err, resp, body) {
+			dispatch({ type: "RECEIVE_USER_KEYWORD", results: JSON.parse(body) });
 		});
 	};
 };
@@ -20484,7 +20489,14 @@ var KeywordSuggest = (function (_React$Component) {
 			var _props$keywordSuggestions = this.props.keywordSuggestions;
 			var suggestions = _props$keywordSuggestions.suggestions;
 			var userSuggestions = _props$keywordSuggestions.userSuggestions;
+			var pending = _props$keywordSuggestions.pending;
 
+			var userSuggestionList = this.props.useUserSuggest ? userSuggestions.map(this.renderSuggestion.bind(this)) : null;
+			var pendingMessage = pending ? _react2["default"].createElement(
+				"span",
+				{ style: { color: "#aaa" } },
+				"Waiting for InPhO..."
+			) : null;
 			return _react2["default"].createElement(
 				"div",
 				{ className: "suggestor" },
@@ -20503,9 +20515,10 @@ var KeywordSuggest = (function (_React$Component) {
 				_react2["default"].createElement(
 					"ul",
 					{ className: "keyword-suggestions" },
-					userSuggestions.map(this.renderSuggestion.bind(this)),
+					userSuggestionList,
 					suggestions.map(this.renderSuggestion.bind(this))
-				)
+				),
+				pendingMessage
 			);
 		}
 	}]);
@@ -20517,7 +20530,8 @@ KeywordSuggest.propTypes = {
 	buttonLabel: _react2["default"].PropTypes.string,
 	keywordSuggestions: _react2["default"].PropTypes.object,
 	onSearch: _react2["default"].PropTypes.func,
-	onSelectKeyword: _react2["default"].PropTypes.func
+	onSelectKeyword: _react2["default"].PropTypes.func,
+	useUserSuggest: _react2["default"].PropTypes.bool
 };
 
 exports["default"] = KeywordSuggest;
@@ -20609,7 +20623,10 @@ var KeywordForm = (function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
-			var addSuggester = this.state.parentConcept ? null : _react2["default"].createElement(_keywordSuggest2["default"], _extends({}, this.props, { buttonLabel: "Select this parent concept", onSelectKeyword: this.setParentConcept.bind(this) }));
+			var addSuggester = this.state.parentConcept ? null : _react2["default"].createElement(_keywordSuggest2["default"], _extends({}, this.props, {
+				buttonLabel: "Select this parent concept",
+				onSelectKeyword: this.setParentConcept.bind(this),
+				useUserSuggest: false }));
 
 			var parentConcept = this.state.parentConcept ? _react2["default"].createElement(
 				"span",
@@ -20641,7 +20658,7 @@ var KeywordForm = (function (_React$Component) {
 				parentConcept,
 				saveButton,
 				addSuggester
-			) : _react2["default"].createElement(_keywordSuggest2["default"], _extends({}, this.props, { buttonLabel: "Add this keyword", onSelectKeyword: this.props.onSelectKeyword }));
+			) : _react2["default"].createElement(_keywordSuggest2["default"], _extends({}, this.props, { buttonLabel: "Add this keyword", onSelectKeyword: this.props.onSelectKeyword, useUserSuggest: true }));
 
 			return _react2["default"].createElement(
 				"div",
@@ -21098,7 +21115,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var initialState = {
 	suggestions: [],
-	userSuggestions: []
+	userSuggestions: [],
+	pending: false
 };
 
 exports["default"] = function (state, action) {
@@ -21107,9 +21125,21 @@ exports["default"] = function (state, action) {
 	switch (action.type) {
 		case "RECEIVE_KEYWORD":
 			state = _extends({}, state, {
-				suggestions: action.results
+				suggestions: action.results,
+				pending: false
 			});
 			break;
+		case "RECEIVE_USER_KEYWORD":
+			state = _extends({}, state, {
+				userSuggestions: action.results
+			});
+			break;
+		case "REMOTE_KEYWORD_PENDING":
+			state = _extends({}, state, {
+				suggestions: [],
+				userSuggestions: [],
+				pending: true
+			});
 	}
 	return state;
 };

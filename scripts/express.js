@@ -28,9 +28,15 @@ MongoClient.connect(url, function(err, db) {
 		var keyword = req.body.keyword;
 		collection.findOne({_id: new ObjectId(req.params.id)}, function(err, item) {
 			console.log("/letters/:id Any error? ", err);
-			var keywords = item.keywords || [];
-			keywords.push(keyword);
-			item.keywords = keywords;
+			if (keyword._id) {
+				var userKeywords = item.userKeywords || [];
+				userKeywords.push(keyword._id);
+				item.userKeywords = userKeywords;
+			} else {
+				var keywords = item.keywords || [];
+				keywords.push(keyword);
+				item.keywords = keywords;
+			}
 			collection.updateOne({_id: new ObjectId(item._id)}, {$set: item});
 			res.end();
 		});
@@ -50,7 +56,6 @@ MongoClient.connect(url, function(err, db) {
 		var query = req.query.query;
 		var collection = db.collection("keywords");
 		collection.find({label: query}).toArray(function(err, docs) {
-			console.log("err? ", err, query, docs);
 			res.send(docs);
 		});
 	});
@@ -95,7 +100,7 @@ MongoClient.connect(url, function(err, db) {
 
 	app.get("/letters", function(req, res) {
 		var collection = db.collection("letters");
-		collection.find({}).toArray(function(err, docs) {
+		collection.find({}).sort({"Date": 1}).toArray(function(err, docs) {
 			console.log("/letters: Any error?", err);
 			res.send(docs);
 		});

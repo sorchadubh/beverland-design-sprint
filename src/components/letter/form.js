@@ -49,7 +49,10 @@ class KeywordForm extends React.Component {
 	render() {
 		const addSuggester =
 			this.state.parentConcept ? null :
-			<KeywordSuggest {...this.props} buttonLabel="Select this parent concept" onSelectKeyword={this.setParentConcept.bind(this)} />;
+			<KeywordSuggest {...this.props}
+				buttonLabel="Select this parent concept"
+				onSelectKeyword={this.setParentConcept.bind(this)}
+				useUserSuggest={false} />;
 
 		const parentConcept =
 			this.state.parentConcept ?
@@ -69,7 +72,7 @@ class KeywordForm extends React.Component {
 				{saveButton}
 				{addSuggester}
 			</div>) :
-			<KeywordSuggest {...this.props} buttonLabel="Add this keyword" onSelectKeyword={this.props.onSelectKeyword} />;
+			<KeywordSuggest {...this.props} buttonLabel="Add this keyword" onSelectKeyword={this.props.onSelectKeyword} useUserSuggest={true} />;
 
 		return (<div>
 			<h3>Add keyword</h3>

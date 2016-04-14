@@ -24,6 +24,7 @@ const findPath = (taxId) => {
 
 const searchKeyword = (query) => (dispatch) => {
 	if(query.length < 2) { return; }
+	dispatch({type: "REMOTE_KEYWORD_PENDING"});
 	xhr({url: `https://inpho.cogs.indiana.edu/entity.json?q=${query}`, method: "GET"}, (err, resp, body) => {
 		const results = JSON.parse(body).responseData.results.map((r) => {
 			const spread = (keywordMap[r.ID] || []).map((taxId) => {
@@ -41,6 +42,10 @@ const searchKeyword = (query) => (dispatch) => {
 		.sort((a, b) => b.taxonomyEntry.length - a.taxonomyEntry.length);
 
 		dispatch({type: "RECEIVE_KEYWORD", results: results });
+	});
+
+	xhr({url: `http://${location.hostname}:5001/keywords?query=${query}`, method: "GET"}, (err, resp, body) => {
+		dispatch({type: "RECEIVE_USER_KEYWORD", results: JSON.parse(body)});
 	});
 };
 
