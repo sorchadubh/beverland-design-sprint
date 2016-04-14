@@ -42,7 +42,9 @@ class KeywordInfo extends React.Component {
 								<a onClick={() => this.props.onLetterJump(letter._id)}>
 									{letter.Sender} to {letter.Addressee} ({parseD(letter.Date)})
 								</a>
-								<div>{letter.Incipit}</div>
+								<div>...lorem ipsum <span style={{fontWeight: "bold", backgroundColor: "yellow"}}>
+									{info.keyword.label}
+								</span> lorem ipsum...</div>
 							</li>
 						))}
 					</ul>

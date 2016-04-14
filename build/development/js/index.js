@@ -20611,7 +20611,13 @@ var KeywordInfo = (function (_React$Component) {
 								_react2["default"].createElement(
 									"div",
 									null,
-									letter.Incipit
+									"...lorem ipsum ",
+									_react2["default"].createElement(
+										"span",
+										{ style: { fontWeight: "bold", backgroundColor: "yellow" } },
+										info.keyword.label
+									),
+									" lorem ipsum..."
 								)
 							);
 						})
