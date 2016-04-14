@@ -54,7 +54,7 @@ class Letter extends React.Component {
 
 				<li>
 					<label>Language: </label>
-					<span>{letter["Language"]}</span>
+					<span>{letter.Language}</span>
 				</li>
 
 

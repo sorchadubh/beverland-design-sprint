@@ -204,3 +204,17 @@ body {
 .app .keyword-suggestions > li:nth-of-type(odd) {
   background-color: #eee;
 }
+.app .keyword-info {
+  float: right;
+  width: 25%;
+}
+.app .keyword-info > li {
+  margin-bottom: 8px;
+}
+.app .keyword-info > li > ul > li {
+  margin-bottom: 6px;
+}
+.app .keyword-info > li > ul > li div {
+  font-size: 0.8em;
+  padding-left: 8px;
+}
