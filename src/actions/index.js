@@ -58,6 +58,12 @@ const setCurrentLetter = (idx) => (dispatch, getState) => {
 	});
 };
 
+const setCurrentLetterById = (id) => (dispatch) => {
+	xhr({url: `http://${location.hostname}:5001/letters/${id}/keywords`}, (err, resp, body) => {
+		dispatch({type: "SET_CURRENT_LETTER", currentId: id, userKeywords: JSON.parse(body)});
+	});
+};
+
 const fetchLetters = () => (dispatch, getState) =>
 	xhr({url: `http://${location.hostname}:5001/letters`}, (err, resp, body) => {
 		dispatch({type: "RECEIVE_LETTERS", letters: JSON.parse(body)});
@@ -114,5 +120,6 @@ export default {
 	onLogin: (username, password) => store.dispatch(login(username, password)),
 	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion)),
 	onSaveKeyword: (suggestion) => store.dispatch(saveUserKeyword(suggestion)),
-	onFocusKeyword: (keyword) => store.dispatch(fetchKeyword(keyword))
+	onFocusKeyword: (keyword) => store.dispatch(fetchKeyword(keyword)),
+	onLetterJump: (letterId) => store.dispatch(setCurrentLetterById(letterId))
 };

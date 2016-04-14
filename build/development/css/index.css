@@ -206,7 +206,8 @@ body {
 }
 .app .keyword-info {
   float: right;
-  width: 25%;
+  clear: right;
+  width: 40%;
 }
 .app .keyword-info > li {
   margin-bottom: 8px;

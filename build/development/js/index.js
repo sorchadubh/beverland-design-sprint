@@ -20234,6 +20234,14 @@ var setCurrentLetter = function setCurrentLetter(idx) {
 	};
 };
 
+var setCurrentLetterById = function setCurrentLetterById(id) {
+	return function (dispatch) {
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters/" + id + "/keywords" }, function (err, resp, body) {
+			dispatch({ type: "SET_CURRENT_LETTER", currentId: id, userKeywords: JSON.parse(body) });
+		});
+	};
+};
+
 var _fetchLetters = function _fetchLetters() {
 	return function (dispatch, getState) {
 		return (0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters" }, function (err, resp, body) {
@@ -20320,6 +20328,9 @@ exports["default"] = {
 	},
 	onFocusKeyword: function onFocusKeyword(keyword) {
 		return _store2["default"].dispatch(fetchKeyword(keyword));
+	},
+	onLetterJump: function onLetterJump(letterId) {
+		return _store2["default"].dispatch(setCurrentLetterById(letterId));
 	}
 };
 module.exports = exports["default"];
@@ -20426,6 +20437,15 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var parseD = function parseD(dateStr) {
+	var day = dateStr.substr(6, 2);
+	var mon = dateStr.substr(4, 2);
+	var year = dateStr.substr(0, 4);
+	var dd = day === "00" ? "" : day + "-";
+	var mm = mon === "00" ? "" : mon + "-";
+	return "" + dd + mm + year;
+};
+
 var KeywordInfo = (function (_React$Component) {
 	_inherits(KeywordInfo, _React$Component);
 
@@ -20448,6 +20468,8 @@ var KeywordInfo = (function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
+			var _this = this;
+
 			var info = this.props.keyword.info;
 			var letters = this.props.letters.letters;
 
@@ -20463,6 +20485,7 @@ var KeywordInfo = (function (_React$Component) {
 					_react2["default"].createElement(
 						"h3",
 						null,
+						"Keyword: ",
 						info.keyword.label
 					)
 				),
@@ -20477,12 +20500,22 @@ var KeywordInfo = (function (_React$Component) {
 				_react2["default"].createElement(
 					"li",
 					null,
-					info.keyword.label,
-					info.keyword.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))
+					_react2["default"].createElement(
+						"div",
+						null,
+						"Hierarchy:"
+					),
+					_react2["default"].createElement(
+						"div",
+						{ style: { padding: "0.8em" } },
+						info.keyword.label,
+						info.keyword.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))
+					)
 				),
 				_react2["default"].createElement(
 					"li",
 					null,
+					"Letters linked to this keyword:",
 					_react2["default"].createElement(
 						"ul",
 						null,
@@ -20494,10 +20527,15 @@ var KeywordInfo = (function (_React$Component) {
 								{ key: i },
 								_react2["default"].createElement(
 									"a",
-									null,
+									{ onClick: function () {
+											return _this.props.onLetterJump(letter._id);
+										} },
 									letter.Sender,
 									" to ",
-									letter.Addressee
+									letter.Addressee,
+									" (",
+									parseD(letter.Date),
+									")"
 								),
 								_react2["default"].createElement(
 									"div",
@@ -20517,7 +20555,8 @@ var KeywordInfo = (function (_React$Component) {
 
 KeywordInfo.propTypes = {
 	keyword: _react2["default"].PropTypes.object,
-	letters: _react2["default"].PropTypes.object
+	letters: _react2["default"].PropTypes.object,
+	onLetterJump: _react2["default"].PropTypes.func
 };
 
 exports["default"] = KeywordInfo;
