@@ -28,18 +28,19 @@ class KeywordSuggest extends React.Component {
 	}
 
 	renderSuggestion(suggestion, i) {
+		const link = suggestion._id ? 
+			<span>(User) <a>{suggestion.label}</a></span> :
+			<a href={suggestion.url} target="_blank">{suggestion.label}</a>;
 		return (<li key={i}>
 			<button onClick={() => this.props.onSelectKeyword(suggestion)}>
 				{this.props.buttonLabel}
 			</button>
-			<a href={suggestion.url} target="_blank">
-				{suggestion.label}
-			</a>
+			{link}
 			{suggestion.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}
 		</li>);
 	}
 	render() {
-		const { suggestions } = this.props.keywordSuggestions;
+		const { suggestions, userSuggestions } = this.props.keywordSuggestions;
 
 		return (
 			<div className="suggestor">
@@ -48,6 +49,7 @@ class KeywordSuggest extends React.Component {
 					<button onClick={() => this.props.onSearch(this.state.keywordSearch)}>Search</button>
 				</div>
 				<ul className="keyword-suggestions">
+					{userSuggestions.map(this.renderSuggestion.bind(this))}
 					{suggestions.map(this.renderSuggestion.bind(this))}
 				</ul>
 			</div>

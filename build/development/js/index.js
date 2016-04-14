@@ -20224,7 +20224,7 @@ var setCurrentLetter = function setCurrentLetter(idx) {
 		var letters = getState().letters.letters;
 
 		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/letters/" + letters[idx]._id + "/keywords" }, function (err, resp, body) {
-			dispatch({ type: "SET_CURRENT_LETTER", current: idx, userKeywords: JSON.parse(body) });
+			dispatch({ type: "SET_CURRENT_LETTER", currentId: letters[idx]._id, userKeywords: JSON.parse(body) });
 		});
 	};
 };
@@ -20448,6 +20448,20 @@ var KeywordSuggest = (function (_React$Component) {
 		value: function renderSuggestion(suggestion, i) {
 			var _this = this;
 
+			var link = suggestion._id ? _react2["default"].createElement(
+				"span",
+				null,
+				"(User) ",
+				_react2["default"].createElement(
+					"a",
+					null,
+					suggestion.label
+				)
+			) : _react2["default"].createElement(
+				"a",
+				{ href: suggestion.url, target: "_blank" },
+				suggestion.label
+			);
 			return _react2["default"].createElement(
 				"li",
 				{ key: i },
@@ -20458,11 +20472,7 @@ var KeywordSuggest = (function (_React$Component) {
 						} },
 					this.props.buttonLabel
 				),
-				_react2["default"].createElement(
-					"a",
-					{ href: suggestion.url, target: "_blank" },
-					suggestion.label
-				),
+				link,
 				suggestion.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))
 			);
 		}
@@ -20471,7 +20481,9 @@ var KeywordSuggest = (function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var suggestions = this.props.keywordSuggestions.suggestions;
+			var _props$keywordSuggestions = this.props.keywordSuggestions;
+			var suggestions = _props$keywordSuggestions.suggestions;
+			var userSuggestions = _props$keywordSuggestions.userSuggestions;
 
 			return _react2["default"].createElement(
 				"div",
@@ -20491,6 +20503,7 @@ var KeywordSuggest = (function (_React$Component) {
 				_react2["default"].createElement(
 					"ul",
 					{ className: "keyword-suggestions" },
+					userSuggestions.map(this.renderSuggestion.bind(this)),
 					suggestions.map(this.renderSuggestion.bind(this))
 				)
 			);
@@ -20591,6 +20604,7 @@ var KeywordForm = (function (_React$Component) {
 				parentUrl: this.state.parentConcept.url
 			};
 			this.props.onSaveKeyword(newKeyword);
+			this.setState({ newKeyword: "", parentConcept: null, mode: modes.SEARCH });
 		}
 	}, {
 		key: "render",
@@ -21083,7 +21097,8 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var initialState = {
-	suggestions: []
+	suggestions: [],
+	userSuggestions: []
 };
 
 exports["default"] = function (state, action) {
@@ -21095,11 +21110,10 @@ exports["default"] = function (state, action) {
 				suggestions: action.results
 			});
 			break;
-	};
+	}
 	return state;
 };
 
-;
 module.exports = exports["default"];
 
 },{}],189:[function(require,module,exports){
@@ -21129,7 +21143,9 @@ exports["default"] = function (state, action) {
 			break;
 		case "SET_CURRENT_LETTER":
 			state = _extends({}, state, {
-				current: action.current,
+				current: state.letters.map(function (l) {
+					return l._id;
+				}).indexOf(action.currentId),
 				userKeywords: action.userKeywords
 			});
 			break;

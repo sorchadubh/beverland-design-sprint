@@ -49,7 +49,7 @@ const setCurrentLetter = (idx) => (dispatch, getState) => {
 	const { letters } = getState().letters;
 
 	xhr({url: `http://${location.hostname}:5001/letters/${letters[idx]._id}/keywords`}, (err, resp, body) => {
-		dispatch({type: "SET_CURRENT_LETTER", current: idx, userKeywords: JSON.parse(body)});
+		dispatch({type: "SET_CURRENT_LETTER", currentId: letters[idx]._id, userKeywords: JSON.parse(body)});
 	});
 };
 

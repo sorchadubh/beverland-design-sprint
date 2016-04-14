@@ -46,6 +46,15 @@ MongoClient.connect(url, function(err, db) {
 		});
 	});
 
+	app.get("/keywords", function(req, res) {
+		var query = req.query.query;
+		var collection = db.collection("keywords");
+		collection.find({label: query}).toArray(function(err, docs) {
+			console.log("err? ", err, query, docs);
+			res.send(docs);
+		});
+	});
+
 	app.post("/keywords", function(req, res) {
 		var data = req.body;
 		var keywordColl = db.collection("keywords");

@@ -1,5 +1,6 @@
 let initialState = {
-	suggestions: []
+	suggestions: [],
+	userSuggestions: []
 };
 
 export default function(state=initialState, action) {
@@ -9,7 +10,7 @@ export default function(state=initialState, action) {
 				suggestions: action.results
 			}};
 			break;
-	};
+	}
 	return state;
-};
+}
 

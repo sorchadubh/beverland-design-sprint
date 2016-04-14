@@ -43,6 +43,7 @@ class KeywordForm extends React.Component {
 			parentUrl: this.state.parentConcept.url
 		};
 		this.props.onSaveKeyword(newKeyword);
+		this.setState({newKeyword: "", parentConcept: null, mode: modes.SEARCH});
 	}
 
 	render() {

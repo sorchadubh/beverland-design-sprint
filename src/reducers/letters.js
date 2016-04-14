@@ -14,7 +14,7 @@ export default function(state=initialState, action) {
 			break;
 		case "SET_CURRENT_LETTER":
 			state = {...state, ...{
-				current: action.current,
+				current: state.letters.map((l) => l._id).indexOf(action.currentId),
 				userKeywords: action.userKeywords
 			}};
 			break;
