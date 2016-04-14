@@ -20381,20 +20381,50 @@ var _keywordInfo = require("./keyword-info");
 
 var _keywordInfo2 = _interopRequireDefault(_keywordInfo);
 
-/*import KeywordSuggest from "./keyword-suggest";*/
+var parseD = function parseD(dateStr) {
+	var day = dateStr.substr(6, 2);
+	var mon = dateStr.substr(4, 2);
+	var year = dateStr.substr(0, 4);
+	var dd = day === "00" ? "" : day + "-";
+	var mm = mon === "00" ? "" : mon + "-";
+	return "" + dd + mm + year;
+};
+
+var openStyle = { position: "fixed", top: "0", left: "0", width: "25%", height: "100%", overflowY: "auto", backgroundColor: "#fff", borderRight: "1px solid black" };
+var closedStyle = { position: "absolute", top: "0", left: "0", overflowY: "hidden", height: "20px" };
 
 var App = (function (_React$Component) {
 	_inherits(App, _React$Component);
 
-	function App() {
+	function App(props) {
 		_classCallCheck(this, App);
 
-		_get(Object.getPrototypeOf(App.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(App.prototype), "constructor", this).call(this, props);
+		this.state = {
+			listOpen: false
+		};
 	}
 
 	_createClass(App, [{
+		key: "toggleOpen",
+		value: function toggleOpen() {
+			if (this.state.listOpen) {
+				this.setState({ listOpen: false });
+			} else {
+				this.setState({ listOpen: true });
+			}
+		}
+	}, {
+		key: "onLetterJump",
+		value: function onLetterJump(letter) {
+			this.props.onLetterJump(letter._id);
+			this.toggleOpen();
+		}
+	}, {
 		key: "render",
 		value: function render() {
+			var _this = this;
+
 			var _props$letters = this.props.letters;
 			var letters = _props$letters.letters;
 			var current = _props$letters.current;
@@ -20404,6 +20434,35 @@ var App = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"div",
 				{ className: "app" },
+				_react2["default"].createElement(
+					"div",
+					{ style: this.state.listOpen ? openStyle : closedStyle },
+					_react2["default"].createElement(
+						"button",
+						{ onClick: this.toggleOpen.bind(this) },
+						this.state.listOpen ? "Close" : "List of letters"
+					),
+					_react2["default"].createElement(
+						"ul",
+						null,
+						letters.map(function (letter, i) {
+							return _react2["default"].createElement(
+								"li",
+								{ key: i },
+								_react2["default"].createElement(
+									"a",
+									{ onClick: _this.onLetterJump.bind(_this, letter) },
+									letter.Sender,
+									" to ",
+									letter.Addressee,
+									" (",
+									parseD(letter.Date),
+									")"
+								)
+							);
+						})
+					)
+				),
 				username === null ? _react2["default"].createElement(_loginForm2["default"], this.props) : _react2["default"].createElement(
 					"span",
 					{ className: "login-form" },
@@ -20421,6 +20480,7 @@ var App = (function (_React$Component) {
 App.propTypes = {
 	letters: _react2["default"].PropTypes.object,
 	onSelect: _react2["default"].PropTypes.func,
+	onLetterJump: _react2["default"].PropTypes.func,
 	user: _react2["default"].PropTypes.object
 };
 
