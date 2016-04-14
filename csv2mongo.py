@@ -27,6 +27,7 @@ for line in fileinput.input(openhook=fileinput.hook_encoded("utf-8")):
             field = fields[i].strip()
             cell = row[i].strip()
             dct[field] = cell
+        dct["userKeywords"] = []
         db.letters.insert_one(dct)
 
 print("done")

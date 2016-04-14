@@ -101,11 +101,18 @@ const saveUserKeyword = (suggestion) => (dispatch, getState) => {
 	});
 };
 
+const fetchKeyword = (keyword) => (dispatch) => {
+	xhr({url: `http://${location.hostname}:5001/keywords/${keyword._id}`}, (err, resp, data) => {
+		dispatch({type: "RECEIVE_KEYWORD_INFO", data: JSON.parse(data)});
+	});
+};
+
 export default {
 	onSearch: (query) => store.dispatch(searchKeyword(query)),
 	fetchLetters: () => store.dispatch(fetchLetters()),
 	onSelect: (idx) => store.dispatch(setCurrentLetter(idx)),
 	onLogin: (username, password) => store.dispatch(login(username, password)),
 	onSelectKeyword: (suggestion) => store.dispatch(addKeyword(suggestion)),
-	onSaveKeyword: (suggestion) => store.dispatch(saveUserKeyword(suggestion))
+	onSaveKeyword: (suggestion) => store.dispatch(saveUserKeyword(suggestion)),
+	onFocusKeyword: (keyword) => store.dispatch(fetchKeyword(keyword))
 };

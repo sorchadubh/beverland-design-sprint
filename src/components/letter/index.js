@@ -77,7 +77,7 @@ class Letter extends React.Component {
 				<li>
 					<label>User keywords: </label>
 					<ul>
-						{(userKeywords || []).map((k, i) => <li key={i}><a>{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}</li>)}
+						{(userKeywords || []).map((k, i) => <li key={i}><a onClick={() => this.props.onFocusKeyword(k)}>{k.label}</a>{k.taxonomyEntry.map(this.renderTaxonomyEntry.bind(this))}</li>)}
 					</ul>
 					{keywordForm}
 				</li>
@@ -89,6 +89,7 @@ class Letter extends React.Component {
 Letter.propTypes = {
 	current: React.PropTypes.number,
 	letter: React.PropTypes.object,
+	onFocusKeyword: React.PropTypes.func,
 	onSelect: React.PropTypes.func,
 	total: React.PropTypes.number,
 	user: React.PropTypes.object,

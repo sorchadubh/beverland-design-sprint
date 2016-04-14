@@ -20291,6 +20291,14 @@ var saveUserKeyword = function saveUserKeyword(suggestion) {
 	};
 };
 
+var fetchKeyword = function fetchKeyword(keyword) {
+	return function (dispatch) {
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/keywords/" + keyword._id }, function (err, resp, data) {
+			dispatch({ type: "RECEIVE_KEYWORD_INFO", data: JSON.parse(data) });
+		});
+	};
+};
+
 exports["default"] = {
 	onSearch: function onSearch(query) {
 		return _store2["default"].dispatch(searchKeyword(query));
@@ -20309,11 +20317,14 @@ exports["default"] = {
 	},
 	onSaveKeyword: function onSaveKeyword(suggestion) {
 		return _store2["default"].dispatch(saveUserKeyword(suggestion));
+	},
+	onFocusKeyword: function onFocusKeyword(keyword) {
+		return _store2["default"].dispatch(fetchKeyword(keyword));
 	}
 };
 module.exports = exports["default"];
 
-},{"../keyword-map":186,"../store":191,"../taxonomy":192,"xhr":176}],180:[function(require,module,exports){
+},{"../keyword-map":186,"../store":192,"../taxonomy":193,"xhr":176}],180:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20363,6 +20374,29 @@ var App = (function (_React$Component) {
 			var current = _props$letters.current;
 			var userKeywords = _props$letters.userKeywords;
 			var username = this.props.user.username;
+			var info = this.props.keyword.info;
+
+			var infoBox = info ? _react2["default"].createElement(
+				"ul",
+				{ style: { float: "right", width: "25%" } },
+				_react2["default"].createElement(
+					"li",
+					null,
+					_react2["default"].createElement(
+						"h3",
+						null,
+						info.keyword.label
+					)
+				),
+				_react2["default"].createElement(
+					"li",
+					null,
+					"Created by ",
+					info.username,
+					" at ",
+					info.created
+				)
+			) : null;
 
 			return _react2["default"].createElement(
 				"div",
@@ -20372,6 +20406,7 @@ var App = (function (_React$Component) {
 					{ className: "login-form" },
 					"Logged in as " + username
 				),
+				infoBox,
 				_react2["default"].createElement(_letter2["default"], _extends({}, this.props, { current: current, letter: letters[current], onSelect: this.props.onSelect, total: letters.length - 1, userKeywords: userKeywords }))
 			);
 		}
@@ -20381,6 +20416,7 @@ var App = (function (_React$Component) {
 })(_react2["default"].Component);
 
 App.propTypes = {
+	keyword: _react2["default"].PropTypes.object,
 	letters: _react2["default"].PropTypes.object,
 	onSelect: _react2["default"].PropTypes.func,
 	user: _react2["default"].PropTypes.object
@@ -20388,7 +20424,6 @@ App.propTypes = {
 
 exports["default"] = App;
 module.exports = exports["default"];
-/*				<KeywordSuggest {...this.props} /> */
 
 },{"./letter":183,"./login-form":184,"react":166}],181:[function(require,module,exports){
 "use strict";
@@ -20459,7 +20494,9 @@ var KeywordSuggest = (function (_React$Component) {
 				"(User) ",
 				_react2["default"].createElement(
 					"a",
-					null,
+					{ onClick: function () {
+							return _this.props.onFocusKeyword(suggestion);
+						} },
 					suggestion.label
 				)
 			) : _react2["default"].createElement(
@@ -20529,6 +20566,7 @@ var KeywordSuggest = (function (_React$Component) {
 KeywordSuggest.propTypes = {
 	buttonLabel: _react2["default"].PropTypes.string,
 	keywordSuggestions: _react2["default"].PropTypes.object,
+	onFocusKeyword: _react2["default"].PropTypes.func,
 	onSearch: _react2["default"].PropTypes.func,
 	onSelectKeyword: _react2["default"].PropTypes.func,
 	useUserSuggest: _react2["default"].PropTypes.bool
@@ -20926,7 +20964,9 @@ var Letter = (function (_React$Component) {
 									{ key: i },
 									_react2["default"].createElement(
 										"a",
-										null,
+										{ onClick: function () {
+												return _this.props.onFocusKeyword(k);
+											} },
 										k.label
 									),
 									k.taxonomyEntry.map(_this.renderTaxonomyEntry.bind(_this))
@@ -20946,6 +20986,7 @@ var Letter = (function (_React$Component) {
 Letter.propTypes = {
 	current: _react2["default"].PropTypes.number,
 	letter: _react2["default"].PropTypes.object,
+	onFocusKeyword: _react2["default"].PropTypes.func,
 	onSelect: _react2["default"].PropTypes.func,
 	total: _react2["default"].PropTypes.number,
 	user: _react2["default"].PropTypes.object,
@@ -21067,7 +21108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	//	ReactDOM.render(<App {...store.getState()} {...actions} />, document.getElementById("app"));
 });
 
-},{"./actions":179,"./components":180,"./store":191,"react":166,"react-dom":37}],186:[function(require,module,exports){
+},{"./actions":179,"./components":180,"./store":192,"react":166,"react-dom":37}],186:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21097,14 +21138,19 @@ var _user = require("./user");
 
 var _user2 = _interopRequireDefault(_user);
 
+var _keyword = require("./keyword");
+
+var _keyword2 = _interopRequireDefault(_keyword);
+
 exports["default"] = {
 	keywordSuggestions: _keywordSuggestions2["default"],
 	letters: _letters2["default"],
-	user: _user2["default"]
+	user: _user2["default"],
+	keyword: _keyword2["default"]
 };
 module.exports = exports["default"];
 
-},{"./keyword-suggestions":188,"./letters":189,"./user":190}],188:[function(require,module,exports){
+},{"./keyword":189,"./keyword-suggestions":188,"./letters":190,"./user":191}],188:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21156,6 +21202,34 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var initialState = {
+	info: null
+};
+
+exports["default"] = function (state, action) {
+	if (state === undefined) state = initialState;
+
+	switch (action.type) {
+		case "RECEIVE_KEYWORD_INFO":
+			state = _extends({}, state, {
+				info: action.data
+			});
+			break;
+	}
+	return state;
+};
+
+module.exports = exports["default"];
+
+},{}],190:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var initialState = {
 	letters: [],
 	current: 0,
 	userKeywords: []
@@ -21185,7 +21259,7 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}],190:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21195,8 +21269,8 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var initialState = {
-	username: "researcher1",
-	id: "570e1803e005626069a2af0b"
+	username: null,
+	id: null
 };
 
 exports["default"] = function (state, action) {
@@ -21221,7 +21295,7 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}],191:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21257,7 +21331,7 @@ var data = (0, _redux.combineReducers)(_reducers2["default"]);
 exports["default"] = (0, _redux.createStore)(data, (0, _redux.applyMiddleware)(logger, _reduxThunk2["default"]));
 module.exports = exports["default"];
 
-},{"../reducers":187,"redux":173,"redux-thunk":167}],192:[function(require,module,exports){
+},{"../reducers":187,"redux":173,"redux-thunk":167}],193:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -52,6 +52,20 @@ MongoClient.connect(url, function(err, db) {
 		});
 	});
 
+	app.get("/keywords/:id", function(req, res) {
+		var kwColl = db.collection("keywords");
+		kwColl.findOne({_id: new ObjectId(req.params.id)}, function(err, keyword) {
+			var userColl = db.collection("users");
+			userColl.findOne({_id: new ObjectId(keyword.userId)}, function(err, user) {
+				res.send({
+					keyword: keyword,
+					username: user.name,
+					created: new ObjectId(keyword._id).getTimestamp().toString()
+				});
+			});
+		});
+	});
+
 	app.get("/keywords", function(req, res) {
 		var query = req.query.query;
 		var collection = db.collection("keywords");
@@ -59,6 +73,8 @@ MongoClient.connect(url, function(err, db) {
 			res.send(docs);
 		});
 	});
+
+
 
 	app.post("/keywords", function(req, res) {
 		var data = req.body;

@@ -29,7 +29,7 @@ class KeywordSuggest extends React.Component {
 
 	renderSuggestion(suggestion, i) {
 		const link = suggestion._id ?
-			<span>(User) <a>{suggestion.label}</a></span> :
+			<span>(User) <a onClick={() => this.props.onFocusKeyword(suggestion)}>{suggestion.label}</a></span> :
 			<a href={suggestion.url} target="_blank">{suggestion.label}</a>;
 		return (<li key={i}>
 			<button onClick={() => this.props.onSelectKeyword(suggestion)}>
@@ -63,6 +63,7 @@ class KeywordSuggest extends React.Component {
 KeywordSuggest.propTypes = {
 	buttonLabel: React.PropTypes.string,
 	keywordSuggestions: React.PropTypes.object,
+	onFocusKeyword: React.PropTypes.func,
 	onSearch: React.PropTypes.func,
 	onSelectKeyword: React.PropTypes.func,
 	useUserSuggest: React.PropTypes.bool
