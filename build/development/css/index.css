@@ -188,6 +188,7 @@ body {
   margin-left: 5px;
   display: inline-block;
   font-style: italic;
+  font-size: 0.8em;
 }
 .app .suggestor {
   margin-top: 10px;
@@ -219,4 +220,14 @@ body {
 .app .keyword-info > li > ul > li div {
   font-size: 0.8em;
   padding-left: 8px;
+}
+.app .keyword-info + div {
+  width: 60%;
+}
+html body div#app div.app div ul.letter-metadata div div.suggestor ul.keyword-suggestions li span span {
+  color: #777;
+  margin-left: 5px;
+  display: inline-block;
+  font-style: italic;
+  font-size: 0.8em;
 }
