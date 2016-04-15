@@ -41,7 +41,7 @@ class KeywordSuggest extends React.Component {
 	}
 
 	render() {
-		const { suggestions, userSuggestions, pending } = this.props.keywordSuggestions;
+		const { suggestions, userSuggestions, moreSuggestions, pending } = this.props.keywordSuggestions;
 		const userSuggestionList = this.props.useUserSuggest ? userSuggestions.map(this.renderSuggestion.bind(this)) : null;
 		const pendingMessage = pending ? <span style={{color: "#aaa"}}>Waiting for InPhO...</span> : null;
 		return (
@@ -52,7 +52,7 @@ class KeywordSuggest extends React.Component {
 				</div>
 				<ul className="keyword-suggestions">
 					{userSuggestionList}
-					{suggestions.map(this.renderSuggestion.bind(this))}
+					{moreSuggestions.map((m) => {delete m._id; return m}).concat(suggestions).map(this.renderSuggestion.bind(this))}
 				</ul>
 				{pendingMessage}
 			</div>

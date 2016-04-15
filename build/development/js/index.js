@@ -20221,6 +20221,12 @@ var searchKeyword = function searchKeyword(query) {
 		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5001/keywords?query=" + query, method: "GET" }, function (err, resp, body) {
 			dispatch({ type: "RECEIVE_USER_KEYWORD", results: JSON.parse(body) });
 		});
+
+		(0, _xhr2["default"])({ url: "http://" + location.hostname + ":5002/concepts?q=" + query, method: "GET" }, function (err, resp, body) {
+			dispatch({ type: "RECEIVE_MORE_KEYWORD", results: JSON.parse(body) });
+		});
+
+		//RECEIVE_MORE_KEYWORD
 	};
 };
 
@@ -20781,6 +20787,7 @@ var KeywordSuggest = (function (_React$Component) {
 			var _props$keywordSuggestions = this.props.keywordSuggestions;
 			var suggestions = _props$keywordSuggestions.suggestions;
 			var userSuggestions = _props$keywordSuggestions.userSuggestions;
+			var moreSuggestions = _props$keywordSuggestions.moreSuggestions;
 			var pending = _props$keywordSuggestions.pending;
 
 			var userSuggestionList = this.props.useUserSuggest ? userSuggestions.map(this.renderSuggestion.bind(this)) : null;
@@ -20808,7 +20815,9 @@ var KeywordSuggest = (function (_React$Component) {
 					"ul",
 					{ className: "keyword-suggestions" },
 					userSuggestionList,
-					suggestions.map(this.renderSuggestion.bind(this))
+					moreSuggestions.map(function (m) {
+						delete m._id;return m;
+					}).concat(suggestions).map(this.renderSuggestion.bind(this))
 				),
 				pendingMessage
 			);
@@ -21627,6 +21636,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var initialState = {
 	suggestions: [],
 	userSuggestions: [],
+	moreSuggestions: [],
 	pending: false
 };
 
@@ -21640,6 +21650,13 @@ exports["default"] = function (state, action) {
 				pending: false
 			});
 			break;
+		case "RECEIVE_MORE_KEYWORD":
+			state = _extends({}, state, {
+				moreSuggestions: action.results,
+				pending: false
+			});
+			break;
+
 		case "RECEIVE_USER_KEYWORD":
 			state = _extends({}, state, {
 				userSuggestions: action.results
@@ -21649,6 +21666,7 @@ exports["default"] = function (state, action) {
 			state = _extends({}, state, {
 				suggestions: [],
 				userSuggestions: [],
+				moreSuggestions: [],
 				pending: true
 			});
 	}

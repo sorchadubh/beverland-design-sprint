@@ -35,10 +35,13 @@
     "lodash.debounce": "^3.1.1",
     "mongodb": "^2.1.16",
     "nib": "^1.1.0",
+    "node-promise": "^0.5.12",
     "proxy-middleware": "^0.14.0",
     "request": "^2.70.0",
+    "sleep": "^3.0.1",
     "stylus": "^0.52.4",
     "url": "^0.11.0",
+    "wait.for": "^0.6.6",
     "watchify": "^3.4.0"
   }
 }

@@ -47,6 +47,13 @@ const searchKeyword = (query) => (dispatch) => {
 	xhr({url: `http://${location.hostname}:5001/keywords?query=${query}`, method: "GET"}, (err, resp, body) => {
 		dispatch({type: "RECEIVE_USER_KEYWORD", results: JSON.parse(body)});
 	});
+
+	xhr({url: `http://${location.hostname}:5002/concepts?q=${query}`, method: "GET"}, (err, resp, body) => {
+		dispatch({type: "RECEIVE_MORE_KEYWORD", results: JSON.parse(body)});
+	});
+
+
+	//RECEIVE_MORE_KEYWORD
 };
 
 

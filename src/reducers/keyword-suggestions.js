@@ -1,6 +1,7 @@
 let initialState = {
 	suggestions: [],
 	userSuggestions: [],
+	moreSuggestions: [],
 	pending: false
 };
 
@@ -12,6 +13,13 @@ export default function(state=initialState, action) {
 				pending: false
 			}};
 			break;
+		case "RECEIVE_MORE_KEYWORD":
+			state = {...state, ...{
+				moreSuggestions: action.results,
+				pending: false
+			}};
+			break;
+
 		case "RECEIVE_USER_KEYWORD":
 			state = {...state, ...{
 				userSuggestions: action.results
@@ -21,6 +29,7 @@ export default function(state=initialState, action) {
 			state = {...state, ...{
 				suggestions: [],
 				userSuggestions: [],
+				moreSuggestions: [],
 				pending: true
 			}};
 	}
