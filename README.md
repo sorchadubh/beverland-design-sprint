@@ -75,5 +75,5 @@ To the right there should be a web preview from where you can press the ![extern
 Alternatively you can type in this IP address in the address bar of your favourite web browser:
 
 ```
-192.168.99.100:3000
+http://192.168.99.100:3000
 ```
