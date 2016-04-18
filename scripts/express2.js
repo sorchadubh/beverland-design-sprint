@@ -1,9 +1,9 @@
 var app = require("express")();
 var bodyParser = require("body-parser");
-var MongoClient = require('mongodb').MongoClient;
-var ObjectId = require('mongodb').ObjectId;
+var MongoClient = require("mongodb").MongoClient;
 
-var url = 'mongodb://localhost:27017/lcc';
+var mongohost = process.env.MONGO_PORT_27017_TCP_ADDR || "localhost";
+var url = "mongodb://" + mongohost + ":27017/lcc";
 
 
 app.use(bodyParser.json());
