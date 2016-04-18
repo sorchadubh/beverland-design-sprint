@@ -42,5 +42,4 @@ RUN pip install pymongo
 
 
 
-ENTRYPOINT ./restore.sh 
-# && ./csv2mongo.py < STSM-2.csv &&  npm start
+ENTRYPOINT ./restore.sh && ./csv2mongo.py < STSM-2.csv &&  npm start
