@@ -18,4 +18,7 @@ if [ "$1" = 'mongod' ]; then
 	fi
 fi
 
+cp -R /beverland-design-sprint/dump/* /data/db/
+ls -l /data/db/
+
 exec "$@"
