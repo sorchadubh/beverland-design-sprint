@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo $MONGO_PORT_27017_TCP_ADDR
+mongorestore --host $MONGO_PORT_27017_TCP_ADDR dump
