@@ -40,4 +40,6 @@ RUN apt-get install -y python python-dev python-distribute python-pip
 
 RUN pip install pymongo
 
+
+
 ENTRYPOINT ./csv2mongo.py < STSM-2.csv &&  npm start
