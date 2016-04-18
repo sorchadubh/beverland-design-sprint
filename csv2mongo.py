@@ -8,7 +8,7 @@ import os
 
 client = None
 try:
-    mongohost = os.environ['MONGO_PORT_80_TCP_ADDR']
+    mongohost = os.environ['MONGO_PORT_27017_TCP_ADDR']
     client = MongoClient(host=mongohost)
     print("HURRAY!")
 except KeyError:
