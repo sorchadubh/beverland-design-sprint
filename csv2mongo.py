@@ -3,8 +3,18 @@
 
 import fileinput
 from pymongo import MongoClient
+import os
 
-client = MongoClient()
+
+client = None
+try:
+    mongohost = os.environ['MONGO_PORT_80_TCP_ADDR']
+    client = MongoClient(host=mongohost)
+    print("HURRAY!")
+except KeyError:
+    client = MongoClient()
+
+
 db = client.beverland
 db.users.drop()
 db.letters.drop()
