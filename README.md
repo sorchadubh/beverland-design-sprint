@@ -65,7 +65,7 @@ In the column to the left there should be two listed _containers_ there with a r
 
 Both _containers_ have to be up and running for the app to work. You can check this by looking at the play/stop buttons on top.
 
-If they not running start them by pressing the _play_ button for both in exactly this order:
+If they are not running start them by pressing the _play_ button for both in exactly this order:
 
 1. (random name 1) mongo
 2. (random name 2) beverland-design-sprint
