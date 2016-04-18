@@ -70,7 +70,7 @@ If they are not running start them by pressing the _play_ button for both in exa
 1. (random name 1) mongo
 2. (random name 2) beverland-design-sprint
 
-To the right there should be a web preview from where you can press the _external link_ icon to open the app in your default browser.
+To the right there should be a web preview from where you can press the [external link](https://cdn3.iconfinder.com/data/icons/unicons-vector-icons-pack/32/external-128.png) icon to open the app in your default browser.
 
 Alternatively you can type in this IP address in the address bar of your favourite web browser:
 
